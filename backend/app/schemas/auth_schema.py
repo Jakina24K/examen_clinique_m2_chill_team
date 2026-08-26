@@ -6,7 +6,6 @@ class LoginRequest(BaseModel):
 
 class LoginResponse(BaseModel):
     token : str
-    role : str
     
     class Config:
         from_attributes = True
@@ -29,7 +28,6 @@ class CurrentUserResponse(BaseModel):
     id: str
     nom: str
     prenom: str
-    role: str
     
     class Config:
         from_attributes = True

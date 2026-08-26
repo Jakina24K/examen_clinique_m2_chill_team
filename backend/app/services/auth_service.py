@@ -36,9 +36,9 @@ class AuthService:
             )
 
             if mot_de_passe_correct:
-                data = {"id": utilisateur.id, "role": utilisateur.role}
+                data = {"id": utilisateur.id}
 
-                return {"token": creer_token(data), "role": utilisateur.role}
+                return {"token": creer_token(data)}
             else:
                 raise HTTPException(
                     status_code=status.HTTP_401_UNAUTHORIZED,

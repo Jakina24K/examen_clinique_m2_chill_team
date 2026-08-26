@@ -3,8 +3,6 @@ from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.params import Depends
 from sqlalchemy.orm import Session
-from app.schemas_tickets.ticket import TicketInput, AgentResponseSchema
-from app.agent.agent import process_ticket
 from app.api.routes import (
     auth
 )
@@ -48,15 +46,3 @@ def health_check_db(db: Session = Depends(get_db)):
         return {"status": "ok", "database": "connected"}
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Database connection error: {str(e)}")
-
-@app.post("/api/tickets/process", response_model=AgentResponseSchema)
-def handle_ticket(ticket: TicketInput):
-    """Endpoint principal de traitement de ticket."""
-    try:
-        start_time = time.time()
-        result = process_ticket(ticket)
-        execution_time = round(time.time() - start_time, 2)
-        print(f"Ticket {ticket.ticket_id} traité en {execution_time}s")
-        return result
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
