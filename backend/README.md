@@ -1,4 +1,4 @@
-# ETUDE DE CAS M2 - AI 
+# ETUDE DE CAS M2 - ORIENT'IA 
 <!-- 
 - LAZAHARIVELO Jakina Andriantsoa 
 N° 05
@@ -55,4 +55,8 @@ python -m tests.test_checkpoint
 4. **Demarrarer le serveur :**
 ```bash
 uvicorn app.main:app --reload --host 0.0.0.0 --port 8000    
+``` 
+5. **Test :**
+```bash
+pytest -v
 ``` 

@@ -1,36 +1,37 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, EmailStr, ConfigDict
 
 class LoginRequest(BaseModel):
-    email : str
-    mot_de_passe : str
+    email: EmailStr
+    mot_de_passe: str
 
 class LoginResponse(BaseModel):
-    token : str
-    role : str
+    token: str
+    token_type: str = "bearer"
+    role: str
     
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 class RegisterRequest(BaseModel):
     nom: str
     prenom: str 
-    email: str
+    email: EmailStr
     mot_de_passe: str
 
 class RegisterResponse(BaseModel):
     id: str
     nom: str
     prenom: str
+    email: EmailStr
+    role: str
     
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 class CurrentUserResponse(BaseModel):
     id: str
     nom: str
     prenom: str
+    email: EmailStr
     role: str
+    actif: bool
     
-    class Config:
-        from_attributes = True
-
+    model_config = ConfigDict(from_attributes=True)
