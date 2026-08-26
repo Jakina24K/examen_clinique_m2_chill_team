@@ -42,9 +42,9 @@ class ToolCallLog(BaseModel):
 
 
 class TicketInput(BaseModel):
-    ticket_id: str = Field(..., example="TCK-1001")
-    description: str = Field(..., example="Impossible de me connecter au VPN depuis ce matin.")
-    utilisateur: str = Field("user_anon", example="jean.dupont")
+    ticket_id: str = Field(..., json_schema_extra={"example": "TCK-1001"})
+    description: str = Field(..., json_schema_extra={"example": "Impossible de me connecter au VPN depuis ce matin."})
+    utilisateur: str = Field("user_anon", json_schema_extra={"example": "jean.dupont"})
 
 
 class AgentResponseSchema(BaseModel):
