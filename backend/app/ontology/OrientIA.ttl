@@ -1,0 +1,2252 @@
+@prefix : <http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix xml: <http://www.w3.org/XML/1998/namespace> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@base <http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/> .
+
+<http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14> rdf:type owl:Ontology .
+
+#################################################################
+#    Annotation properties
+#################################################################
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/descriptionCompetence
+:descriptionCompetence rdf:type owl:AnnotationProperty .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/descriptionFormation
+:descriptionFormation rdf:type owl:AnnotationProperty .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/descriptionMention
+:descriptionMention rdf:type owl:AnnotationProperty .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/descriptionMetier
+:descriptionMetier rdf:type owl:AnnotationProperty .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/descriptionParcours
+:descriptionParcours rdf:type owl:AnnotationProperty .
+
+
+#################################################################
+#    Object Properties
+#################################################################
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/aPourCentreInteret
+:aPourCentreInteret rdf:type owl:ObjectProperty ;
+                    rdfs:domain :etudiant ;
+                    rdfs:range :centreInterets .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/aPourSerie
+:aPourSerie rdf:type owl:ObjectProperty ;
+            rdfs:domain :etudiant ;
+            rdfs:range :series .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/comporteMention
+:comporteMention rdf:type owl:ObjectProperty ;
+                 rdfs:domain :formation ;
+                 rdfs:range :mention .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/comporteParcours
+:comporteParcours rdf:type owl:ObjectProperty ;
+                  rdfs:domain :mention ;
+                  rdfs:range :parcours .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/developpe
+:developpe rdf:type owl:ObjectProperty ;
+           rdfs:domain :parcours ;
+           rdfs:range :competences .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/enseigne
+:enseigne rdf:type owl:ObjectProperty ;
+          rdfs:domain :parcours ;
+          rdfs:range :matieres .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/etreRequisePour
+:etreRequisePour rdf:type owl:ObjectProperty ;
+                 rdfs:domain :competences ;
+                 rdfs:range :metiers .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/necessite
+:necessite rdf:type owl:ObjectProperty ;
+           rdfs:domain :parcours ;
+           rdfs:range :prerequis .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/possede
+:possede rdf:type owl:ObjectProperty ;
+         rdfs:domain :etudiant ;
+         rdfs:range :competences .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/prefere
+:prefere rdf:type owl:ObjectProperty ;
+         rdfs:domain :etudiant ;
+         rdfs:range :matieres .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/prepareA
+:prepareA rdf:type owl:ObjectProperty ;
+          rdfs:domain :parcours ;
+          rdfs:range :metiers .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/sousMatiereDe
+:sousMatiereDe rdf:type owl:ObjectProperty ;
+               rdfs:domain :matieres ;
+               rdfs:range :matieres .
+
+
+#################################################################
+#    Data properties
+#################################################################
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/age
+:age rdf:type owl:DatatypeProperty ;
+     rdfs:domain :etudiant ;
+     rdfs:range xsd:integer .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/anneeBac
+:anneeBac rdf:type owl:DatatypeProperty ;
+          rdfs:domain :etudiant ;
+          rdfs:range xsd:integer .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/dureeFormation
+:dureeFormation rdf:type owl:DatatypeProperty ;
+                rdfs:domain :parcours ;
+                rdfs:range xsd:integer .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/moyenneGenerale
+:moyenneGenerale rdf:type owl:DatatypeProperty ;
+                 rdfs:domain :etudiant ;
+                 rdfs:range xsd:decimal .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/nom
+:nom rdf:type owl:DatatypeProperty ;
+     rdfs:domain :etudiant ;
+     rdfs:range xsd:string .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/prenom
+:prenom rdf:type owl:DatatypeProperty ;
+        rdfs:domain :etudiant ;
+        rdfs:range xsd:string .
+
+
+#################################################################
+#    Classes
+#################################################################
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/A
+:A rdf:type owl:Class ;
+   rdfs:subClassOf :series .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/C
+:C rdf:type owl:Class ;
+   rdfs:subClassOf :series .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/D
+:D rdf:type owl:Class ;
+   rdfs:subClassOf :series .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/L
+:L rdf:type owl:Class ;
+   rdfs:subClassOf :series .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/OSE
+:OSE rdf:type owl:Class ;
+     rdfs:subClassOf :series .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/S
+:S rdf:type owl:Class ;
+   rdfs:subClassOf :series .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/Techniques
+:Techniques rdf:type owl:Class ;
+            rdfs:subClassOf :series .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/centreInterets
+:centreInterets rdf:type owl:Class .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/competences
+:competences rdf:type owl:Class .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/etudiant
+:etudiant rdf:type owl:Class .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/formation
+:formation rdf:type owl:Class .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/matieres
+:matieres rdf:type owl:Class .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/mention
+:mention rdf:type owl:Class ;
+         rdfs:subClassOf :formation .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/metiers
+:metiers rdf:type owl:Class .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/parcours
+:parcours rdf:type owl:Class .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/prerequis
+:prerequis rdf:type owl:Class .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/series
+:series rdf:type owl:Class .
+
+
+#################################################################
+#    Individuals
+#################################################################
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/A
+:A rdf:type owl:NamedIndividual .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/AEE
+:AEE rdf:type owl:NamedIndividual ,
+              :parcours ;
+     :descriptionParcours "Agriculture et Environnement (fusionné dans BIO)" .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/Adaptabilite
+:Adaptabilite rdf:type owl:NamedIndividual ,
+                       :competences .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/AdministrateurBaseDeDonnees
+:AdministrateurBaseDeDonnees rdf:type owl:NamedIndividual ,
+                                      :metiers ;
+                             :descriptionMetier "Administre et maintient les bases de données d'une organisation." .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/AdministrateurReseaux
+:AdministrateurReseaux rdf:type owl:NamedIndividual ,
+                                :metiers ;
+                       :descriptionMetier "Administre et maintient les réseaux informatiques." .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/AdministrateurSystemes
+:AdministrateurSystemes rdf:type owl:NamedIndividual ,
+                                 :metiers ;
+                        :descriptionMetier "Administre et maintient les systèmes d'exploitation et serveurs." .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/AdministrationReseaux
+:AdministrationReseaux rdf:type owl:NamedIndividual ,
+                                :competences .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/AdministrationSystemes
+:AdministrationSystemes rdf:type owl:NamedIndividual ,
+                                 :competences .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/Agriculture
+:Agriculture rdf:type owl:NamedIndividual ,
+                      :centreInterets ,
+                      :matieres .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/Algebre
+:Algebre rdf:type owl:NamedIndividual ,
+                  :matieres ;
+         :sousMatiereDe :Mathematiques .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/Algorithmique
+:Algorithmique rdf:type owl:NamedIndividual ,
+                        :matieres ;
+               :sousMatiereDe :Informatique .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/Analyse
+:Analyse rdf:type owl:NamedIndividual ,
+                  :matieres ;
+         :sousMatiereDe :Mathematiques .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/AnalyseDonnees
+:AnalyseDonnees rdf:type owl:NamedIndividual ,
+                         :competences ;
+                :etreRequisePour :DataAnalyst ,
+                                 :DataEngineer ,
+                                 :DataScientist .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/AnalyseEconomique
+:AnalyseEconomique rdf:type owl:NamedIndividual ,
+                            :competences .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/AnalyseEnvironnementale
+:AnalyseEnvironnementale rdf:type owl:NamedIndividual ,
+                                  :competences .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/AnalyseFinanciere
+:AnalyseFinanciere rdf:type owl:NamedIndividual ,
+                            :competences .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/AnalyseJuridique
+:AnalyseJuridique rdf:type owl:NamedIndividual ,
+                           :competences .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/AnalyseQuantitative
+:AnalyseQuantitative rdf:type owl:NamedIndividual ,
+                              :competences .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/AnalyseScientifique
+:AnalyseScientifique rdf:type owl:NamedIndividual ,
+                              :competences ;
+                     :etreRequisePour :DataScientist ,
+                                      :IngenieurAgronome .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/AnalysteCybersecurite
+:AnalysteCybersecurite rdf:type owl:NamedIndividual ,
+                                :metiers ;
+                       :descriptionMetier "Analyse et protège les systèmes informatiques contre les menaces." .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/AnalysteFinancier
+:AnalysteFinancier rdf:type owl:NamedIndividual ,
+                            :metiers ;
+                   :descriptionMetier "Analyse les données financières et produit des recommandations." .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/AnalysteFonctionnel
+:AnalysteFonctionnel rdf:type owl:NamedIndividual ,
+                              :metiers ;
+                     :descriptionMetier "Analyse les besoins métier et les traduit en spécifications techniques." .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/AnalysteJuridique
+:AnalysteJuridique rdf:type owl:NamedIndividual ,
+                            :metiers ;
+                   :descriptionMetier "Analyse et conseille sur les questions juridiques." .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/Anglais
+:Anglais rdf:type owl:NamedIndividual ,
+                  :matieres .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/AnglaisProfessionnel
+:AnglaisProfessionnel rdf:type owl:NamedIndividual ,
+                               :competences .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/ArchitecteLogiciel
+:ArchitecteLogiciel rdf:type owl:NamedIndividual ,
+                             :metiers ;
+                    :descriptionMetier "Conçoit l'architecture des systèmes logiciels." .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/Architecture
+:Architecture rdf:type owl:NamedIndividual ,
+                       :centreInterets .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/ArchitectureLogicielle
+:ArchitectureLogicielle rdf:type owl:NamedIndividual ,
+                                 :competences .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/Arts
+:Arts rdf:type owl:NamedIndividual ,
+               :centreInterets .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/Assainissement
+:Assainissement rdf:type owl:NamedIndividual ,
+                         :matieres ;
+                :sousMatiereDe :Agriculture .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/Audit
+:Audit rdf:type owl:NamedIndividual ,
+                :competences .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/Auditeur
+:Auditeur rdf:type owl:NamedIndividual ,
+                   :metiers ;
+          :descriptionMetier "Vérifie la conformité des comptes et des processus." .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/AuditeurSI
+:AuditeurSI rdf:type owl:NamedIndividual ,
+                     :metiers ;
+            :descriptionMetier "Audite les systèmes d'information et la sécurité." .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/Autocad
+:Autocad rdf:type owl:NamedIndividual ,
+                  :matieres ;
+         :sousMatiereDe :Technologie .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/Automatisme
+:Automatisme rdf:type owl:NamedIndividual ,
+                      :centreInterets ,
+                      :matieres ;
+             :sousMatiereDe :Informatique .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/Autonomie
+:Autonomie rdf:type owl:NamedIndividual ,
+                    :competences .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/BIO
+:BIO rdf:type owl:NamedIndividual ,
+              :parcours ;
+     :developpe :AnalyseScientifique ,
+                :Experimentation ,
+                :RechercheScientifique ;
+     :enseigne :Analyse ,
+               :Bacteriologie ,
+               :Biochimie ,
+               :BiologieAnimale ,
+               :BiologieCellulaire ,
+               :Chimie ,
+               :Enzymologie ,
+               :Genetique ,
+               :Informatique ,
+               :PhysiologieAnimale ,
+               :PhysiologieVegetale ,
+               :Thermodynamique ,
+               :Virologie ;
+     :necessite :BasesBiologie ,
+                :BasesChimie ,
+                :BasesScientifiques ;
+     :prepareA :ConseillerAgricole ,
+               :IngenieurAgronome ,
+               :ResponsableProductionAgricole ,
+               :TechnicienAgricole ;
+     :dureeFormation 2 ;
+     :descriptionParcours "Biotechnologies et Agronomie" .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/Bacteriologie
+:Bacteriologie rdf:type owl:NamedIndividual ,
+                        :matieres ;
+               :sousMatiereDe :Biologie .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/BaseDeDonnees
+:BaseDeDonnees rdf:type owl:NamedIndividual ,
+                        :centreInterets ,
+                        :competences ,
+                        :matieres ;
+               :etreRequisePour :AdministrateurBaseDeDonnees ,
+                                :DataEngineer ,
+                                :DeveloppeurLogiciel ;
+               :sousMatiereDe :Informatique .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/BasesAgriculture
+:BasesAgriculture rdf:type owl:NamedIndividual ,
+                           :prerequis .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/BasesAlgorithmique
+:BasesAlgorithmique rdf:type owl:NamedIndividual ,
+                             :prerequis .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/BasesAutomatisme
+:BasesAutomatisme rdf:type owl:NamedIndividual ,
+                           :prerequis .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/BasesBaseDeDonnees
+:BasesBaseDeDonnees rdf:type owl:NamedIndividual ,
+                             :prerequis .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/BasesBiologie
+:BasesBiologie rdf:type owl:NamedIndividual ,
+                        :prerequis .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/BasesChimie
+:BasesChimie rdf:type owl:NamedIndividual ,
+                      :prerequis .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/BasesComptabilite
+:BasesComptabilite rdf:type owl:NamedIndividual ,
+                            :prerequis .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/BasesDessinTechnique
+:BasesDessinTechnique rdf:type owl:NamedIndividual ,
+                               :prerequis .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/BasesDroit
+:BasesDroit rdf:type owl:NamedIndividual ,
+                     :prerequis .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/BasesEconomie
+:BasesEconomie rdf:type owl:NamedIndividual ,
+                        :prerequis .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/BasesElectricite
+:BasesElectricite rdf:type owl:NamedIndividual ,
+                           :prerequis .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/BasesElectronique
+:BasesElectronique rdf:type owl:NamedIndividual ,
+                            :prerequis .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/BasesGestion
+:BasesGestion rdf:type owl:NamedIndividual ,
+                       :prerequis .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/BasesInformatiques
+:BasesInformatiques rdf:type owl:NamedIndividual ,
+                             :prerequis .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/BasesMathematiques
+:BasesMathematiques rdf:type owl:NamedIndividual ,
+                             :prerequis .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/BasesMecanique
+:BasesMecanique rdf:type owl:NamedIndividual ,
+                         :prerequis .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/BasesPhysique
+:BasesPhysique rdf:type owl:NamedIndividual ,
+                        :prerequis .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/BasesProgrammation
+:BasesProgrammation rdf:type owl:NamedIndividual ,
+                             :prerequis .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/BasesReseaux
+:BasesReseaux rdf:type owl:NamedIndividual ,
+                       :prerequis .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/BasesScientifiques
+:BasesScientifiques rdf:type owl:NamedIndividual ,
+                             :prerequis .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/BasesStatistiques
+:BasesStatistiques rdf:type owl:NamedIndividual ,
+                            :prerequis .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/Biochimie
+:Biochimie rdf:type owl:NamedIndividual ,
+                    :matieres ;
+           :sousMatiereDe :Chimie .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/Biologie
+:Biologie rdf:type owl:NamedIndividual ,
+                   :centreInterets ,
+                   :matieres .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/BiologieAnimale
+:BiologieAnimale rdf:type owl:NamedIndividual ,
+                          :matieres ;
+                 :sousMatiereDe :Biologie .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/BiologieCellulaire
+:BiologieCellulaire rdf:type owl:NamedIndividual ,
+                             :matieres ;
+                    :sousMatiereDe :Biologie .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/Biotechnologie
+:Biotechnologie rdf:type owl:NamedIndividual ,
+                         :matieres ;
+                :sousMatiereDe :Biologie .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/Botanique
+:Botanique rdf:type owl:NamedIndividual ,
+                    :matieres ;
+           :sousMatiereDe :Agriculture .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/BusinessAnalyst
+:BusinessAnalyst rdf:type owl:NamedIndividual ,
+                          :metiers ;
+                 :descriptionMetier "Analyse les besoins métier et propose des solutions." .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/C
+:C rdf:type owl:NamedIndividual .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/CAA
+:CAA rdf:type owl:NamedIndividual ,
+              :parcours ;
+     :developpe :AnalyseFinanciere ,
+                :Audit ,
+                :ControleGestion ;
+     :enseigne :Comptabilite ,
+               :Droit ,
+               :Economie ,
+               :FinancePublique ,
+               :Fiscalite ,
+               :Marketing ,
+               :OrganisationEntreprise ,
+               :TechniqueBancaire ;
+     :necessite :BasesComptabilite ,
+                :BasesDroit ,
+                :BasesEconomie ;
+     :prepareA :AnalysteFinancier ,
+               :Auditeur ,
+               :Comptable ,
+               :ControleurGestion ;
+     :dureeFormation 2 ;
+     :descriptionParcours "Comptabilité, Audit et Assistance" .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/CalculStructure
+:CalculStructure rdf:type owl:NamedIndividual ,
+                          :competences .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/CapaciteAnalysePrerequis
+:CapaciteAnalysePrerequis rdf:type owl:NamedIndividual ,
+                                   :prerequis .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/CapaciteOrganisation
+:CapaciteOrganisation rdf:type owl:NamedIndividual ,
+                               :prerequis .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/ChefChantier
+:ChefChantier rdf:type owl:NamedIndividual ,
+                       :metiers ;
+              :descriptionMetier "Gère et coordonne les travaux sur un chantier." .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/ChefProjetInformatique
+:ChefProjetInformatique rdf:type owl:NamedIndividual ,
+                                 :metiers ;
+                        :descriptionMetier "Planifie et coordonne la réalisation de projets informatiques." .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/Chimie
+:Chimie rdf:type owl:NamedIndividual ,
+                 :centreInterets ,
+                 :matieres .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/ChimieIndustrielle
+:ChimieIndustrielle rdf:type owl:NamedIndividual ,
+                             :matieres ;
+                    :sousMatiereDe :Chimie .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/ChimieMinerale
+:ChimieMinerale rdf:type owl:NamedIndividual ,
+                         :matieres ;
+                :sousMatiereDe :Chimie .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/ChimieOrganique
+:ChimieOrganique rdf:type owl:NamedIndividual ,
+                          :matieres ;
+                 :sousMatiereDe :Chimie .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/Commerce
+:Commerce rdf:type owl:NamedIndividual ,
+                   :centreInterets ,
+                   :matieres ;
+          :sousMatiereDe :Economie .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/Communication
+:Communication rdf:type owl:NamedIndividual ,
+                        :competences ;
+               :etreRequisePour :BusinessAnalyst ,
+                                :ChefProjetInformatique ,
+                                :ConsultantSI .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/CommunicationEcrite
+:CommunicationEcrite rdf:type owl:NamedIndividual ,
+                              :competences .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/CommunicationOrale
+:CommunicationOrale rdf:type owl:NamedIndividual ,
+                             :competences .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/CommunicationProfessionnelle
+:CommunicationProfessionnelle rdf:type owl:NamedIndividual ,
+                                       :matieres .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/CommunicationTouristique
+:CommunicationTouristique rdf:type owl:NamedIndividual ,
+                                   :matieres ;
+                          :sousMatiereDe :Tourisme .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/Comptabilite
+:Comptabilite rdf:type owl:NamedIndividual ,
+                       :matieres ;
+              :sousMatiereDe :Economie .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/Comptable
+:Comptable rdf:type owl:NamedIndividual ,
+                    :metiers ;
+           :descriptionMetier "Tient la comptabilité et produit les états financiers." .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/ConceptionBatiment
+:ConceptionBatiment rdf:type owl:NamedIndividual ,
+                             :competences .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/ConceptionLogicielle
+:ConceptionLogicielle rdf:type owl:NamedIndividual ,
+                               :competences .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/ConceptionTechnique
+:ConceptionTechnique rdf:type owl:NamedIndividual ,
+                              :competences .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/ConducteurTravaux
+:ConducteurTravaux rdf:type owl:NamedIndividual ,
+                            :metiers ;
+                   :descriptionMetier "Dirige et supervise les travaux de construction." .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/ConnaissancesEnvironnementales
+:ConnaissancesEnvironnementales rdf:type owl:NamedIndividual ,
+                                         :prerequis .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/Conseil
+:Conseil rdf:type owl:NamedIndividual ,
+                  :competences .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/ConseillerAgricole
+:ConseillerAgricole rdf:type owl:NamedIndividual ,
+                             :metiers ;
+                    :descriptionMetier "Conseille les agriculteurs sur les pratiques culturales." .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/Construction
+:Construction rdf:type owl:NamedIndividual ,
+                       :competences .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/ConsultantSI
+:ConsultantSI rdf:type owl:NamedIndividual ,
+                       :metiers ;
+              :descriptionMetier "Conseille les organisations sur leur système d'information." .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/ControleGestion
+:ControleGestion rdf:type owl:NamedIndividual ,
+                          :competences .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/ControleurGestion
+:ControleurGestion rdf:type owl:NamedIndividual ,
+                            :metiers ;
+                   :descriptionMetier "Contrôle la gestion financière et opérationnelle." .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/Creativite
+:Creativite rdf:type owl:NamedIndividual ,
+                     :competences .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/CultureGenerale
+:CultureGenerale rdf:type owl:NamedIndividual ,
+                          :matieres .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/Cybersecurite
+:Cybersecurite rdf:type owl:NamedIndividual ,
+                        :centreInterets ,
+                        :competences .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/DTJA
+:DTJA rdf:type owl:NamedIndividual ,
+               :parcours ;
+      :developpe :AnalyseJuridique ,
+                 :RedactionAdministrative ,
+                 :VeilleJuridique ;
+      :enseigne :Droit ,
+                :Economie ,
+                :FinancePublique ,
+                :Fiscalite ,
+                :Logique ,
+                :Marketing ,
+                :OrganisationEntreprise ;
+      :necessite :BasesDroit ,
+                 :BasesEconomie ;
+      :prepareA :ResponsableAdministratif ;
+      :dureeFormation 2 ;
+      :descriptionParcours "Droit, Techniques Juridiques et Administratives" .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/DataAnalyst
+:DataAnalyst rdf:type owl:NamedIndividual ,
+                      :metiers ;
+             :descriptionMetier "Analyse les données et produit des indicateurs et rapports." .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/DataEngineer
+:DataEngineer rdf:type owl:NamedIndividual ,
+                       :metiers ;
+              :descriptionMetier "Conçoit et maintient les infrastructures de données." .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/DataMining
+:DataMining rdf:type owl:NamedIndividual ,
+                     :competences .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/DataScience
+:DataScience rdf:type owl:NamedIndividual ,
+                      :centreInterets .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/DataScientist
+:DataScientist rdf:type owl:NamedIndividual ,
+                        :metiers ;
+               :descriptionMetier "Exploite les données pour produire des modèles prédictifs." .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/DessinTechnique
+:DessinTechnique rdf:type owl:NamedIndividual ,
+                          :centreInterets ,
+                          :competences ,
+                          :matieres ;
+                 :sousMatiereDe :Technologie .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/DeveloppementMobile
+:DeveloppementMobile rdf:type owl:NamedIndividual ,
+                              :competences .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/DeveloppementWeb
+:DeveloppementWeb rdf:type owl:NamedIndividual ,
+                           :competences ;
+                  :etreRequisePour :DeveloppeurWeb .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/DeveloppeurLogiciel
+:DeveloppeurLogiciel rdf:type owl:NamedIndividual ,
+                              :metiers ;
+                     :descriptionMetier "Conçoit, développe et maintient des applications logicielles." .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/DeveloppeurMobile
+:DeveloppeurMobile rdf:type owl:NamedIndividual ,
+                            :metiers ;
+                   :descriptionMetier "Développe des applications pour appareils mobiles." .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/DeveloppeurWeb
+:DeveloppeurWeb rdf:type owl:NamedIndividual ,
+                         :metiers ;
+                :descriptionMetier "Conçoit et développe des applications et sites web." .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/DiagnosticAgricole
+:DiagnosticAgricole rdf:type owl:NamedIndividual ,
+                             :competences .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/DiagnosticTechnique
+:DiagnosticTechnique rdf:type owl:NamedIndividual ,
+                              :competences .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/Droit
+:Droit rdf:type owl:NamedIndividual ,
+                :centreInterets ,
+                :matieres .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/EMII
+:EMII rdf:type owl:NamedIndividual ,
+               :parcours ;
+      :developpe :Electrotechnique ,
+                 :MaintenanceIndustrielle ,
+                 :MecaniqueIndustrielle ;
+      :enseigne :Autocad ,
+                :DessinTechnique ,
+                :Electricite ,
+                :Electronique ,
+                :Maintenance ,
+                :Mecanique ,
+                :OuvragesMetalliques ,
+                :Thermodynamique ;
+      :necessite :BasesDessinTechnique ,
+                 :BasesElectricite ,
+                 :BasesMecanique ;
+      :prepareA :IngenieurElectricien ,
+                :IngenieurMecanicien ,
+                :ResponsableMaintenance ;
+      :dureeFormation 2 ;
+      :descriptionParcours "Energétique, Maintenance et Ingénierie Industrielle" .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/EMP
+:EMP rdf:type owl:NamedIndividual ,
+              :parcours ;
+     :developpe :AnalyseEconomique ,
+                :GestionEntreprise ,
+                :PriseDecision ;
+     :enseigne :Comptabilite ,
+               :Droit ,
+               :Econometrie ,
+               :FinancePublique ,
+               :MacroeconomieMicroeconomie ,
+               :Marketing ,
+               :OrganisationEntreprise ,
+               :TechniqueBancaire ;
+     :necessite :BasesEconomie ,
+                :BasesMathematiques ;
+     :prepareA :BusinessAnalyst ,
+               :GestionnaireEntreprise ,
+               :ResponsableFinancier ;
+     :dureeFormation 2 ;
+     :descriptionParcours "Economie, Management et Pilotage" .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/ESIIA
+:ESIIA rdf:type owl:NamedIndividual ,
+                :parcours ;
+       :developpe :Electronique ,
+                  :Instrumentation ;
+       :enseigne :Algebre ,
+                 :Analyse ,
+                 :BaseDeDonnees ,
+                 :Electronique ,
+                 :Francais ,
+                 :HTMLCSS ,
+                 :InformatiqueScientifique ,
+                 :LangageC ,
+                 :MathematiquesDiscretes ,
+                 :ProbabilitesStatistiques ,
+                 :StructureDesOrdinateurs ,
+                 :StructuresDonnees ;
+       :necessite :BasesElectronique ,
+                  :BasesInformatiques ,
+                  :BasesMathematiques ;
+       :prepareA :AnalysteCybersecurite ,
+                 :IngenieurElectricien ,
+                 :IngenieurReseaux ;
+       :dureeFormation 2 ;
+       :descriptionParcours "Electronique, Systèmes, Informatique et Instrumentation" .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/Ecologie
+:Ecologie rdf:type owl:NamedIndividual ,
+                   :centreInterets ,
+                   :matieres ;
+          :sousMatiereDe :Agriculture .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/Econometrie
+:Econometrie rdf:type owl:NamedIndividual ,
+                      :matieres ;
+             :sousMatiereDe :Economie .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/Economie
+:Economie rdf:type owl:NamedIndividual ,
+                   :centreInterets ,
+                   :matieres .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/EducationPhysiqueSportive
+:EducationPhysiqueSportive rdf:type owl:NamedIndividual ,
+                                    :matieres .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/Electricite
+:Electricite rdf:type owl:NamedIndividual ,
+                      :centreInterets ,
+                      :matieres ;
+             :sousMatiereDe :Physique .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/Electronique
+:Electronique rdf:type owl:NamedIndividual ,
+                       :centreInterets ,
+                       :competences ,
+                       :matieres ;
+              :sousMatiereDe :Physique .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/Electrotechnique
+:Electrotechnique rdf:type owl:NamedIndividual ,
+                           :competences .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/Elevage
+:Elevage rdf:type owl:NamedIndividual ,
+                  :centreInterets ,
+                  :matieres ;
+         :sousMatiereDe :Agriculture .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/Entrepreneuriat
+:Entrepreneuriat rdf:type owl:NamedIndividual ,
+                          :centreInterets .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/Environnement
+:Environnement rdf:type owl:NamedIndividual ,
+                        :centreInterets ,
+                        :matieres ;
+               :sousMatiereDe :Agriculture .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/Enzymologie
+:Enzymologie rdf:type owl:NamedIndividual ,
+                      :matieres ;
+             :sousMatiereDe :Biologie .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/EspritAnalyse
+:EspritAnalyse rdf:type owl:NamedIndividual ,
+                        :competences .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/EspritCritique
+:EspritCritique rdf:type owl:NamedIndividual ,
+                         :competences .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/Etudiant01
+:Etudiant01 rdf:type owl:NamedIndividual ,
+                     :etudiant ;
+            :aPourCentreInteret :DataScience ,
+                                :Informatique ,
+                                :IntelligenceArtificielle ,
+                                :Programmation ;
+            :aPourSerie :S ;
+            :possede :AnalyseDonnees ,
+                     :Programmation ,
+                     :RaisonnementLogique ,
+                     :Statistiques ;
+            :prefere :Informatique ,
+                     :Mathematiques ,
+                     :PhysiqueChimie ;
+            :nom "Rakoto" ;
+            :prenom "Jean" .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/Etudiant02
+:Etudiant02 rdf:type owl:NamedIndividual ,
+                     :etudiant ;
+            :aPourCentreInteret :Entrepreneuriat ,
+                                :Gestion ,
+                                :Informatique ,
+                                :Reseaux ;
+            :aPourSerie :Techniques ;
+            :possede :BaseDeDonnees ,
+                     :DeveloppementWeb ,
+                     :GestionProjet ,
+                     :Programmation ;
+            :prefere :Anglais ,
+                     :Informatique ,
+                     :Mathematiques ;
+            :nom "Rasoanaivo" ;
+            :prenom "Sarah" .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/Etudiant03
+:Etudiant03 rdf:type owl:NamedIndividual ,
+                     :etudiant ;
+            :aPourCentreInteret :Biologie ,
+                                :DataScience ,
+                                :Mathematiques ,
+                                :RechercheScientifique ;
+            :aPourSerie :S ;
+            :possede :AnalyseScientifique ,
+                     :RaisonnementLogique ,
+                     :Statistiques ;
+            :prefere :Mathematiques ,
+                     :PhysiqueChimie ,
+                     :SVT ;
+            :nom "Andriamihaja" ;
+            :prenom "Lucas" .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/Etudiant04
+:Etudiant04 rdf:type owl:NamedIndividual ,
+                     :etudiant ;
+            :aPourCentreInteret :Commerce ,
+                                :Economie ,
+                                :Gestion ,
+                                :Marketing ;
+            :aPourSerie :A ;
+            :possede :Communication ,
+                     :GestionProjet ;
+            :prefere :Anglais ,
+                     :Economie ,
+                     :Francais ;
+            :nom "Raharison" ;
+            :prenom "Mia" .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/Etudiant05
+:Etudiant05 rdf:type owl:NamedIndividual ,
+                     :etudiant ;
+            :aPourSerie :C ;
+            :possede :AnalyseScientifique ,
+                     :Experimentation ;
+            :prefere :Biologie ,
+                     :Chimie ,
+                     :SVT ;
+            :nom "Razafindrakoto" ;
+            :prenom "Tiana" .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/Etudiant06
+:Etudiant06 rdf:type owl:NamedIndividual ,
+                     :etudiant ;
+            :aPourCentreInteret :Architecture ,
+                                :Automatisme ,
+                                :GenieCivil ,
+                                :Mecanique ;
+            :aPourSerie :Techniques ;
+            :possede :ConceptionTechnique ,
+                     :DessinTechnique ;
+            :prefere :Mecanique ,
+                     :Physique ,
+                     :Technologie ;
+            :nom "Ramanantsoa" ;
+            :prenom "Hery" .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/Experimentation
+:Experimentation rdf:type owl:NamedIndividual ,
+                          :competences .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/ExpertBigData
+:ExpertBigData rdf:type owl:NamedIndividual ,
+                        :metiers ;
+               :descriptionMetier "Expert en analyse et traitement des grandes masses de données." .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/ExpertEnvironnement
+:ExpertEnvironnement rdf:type owl:NamedIndividual ,
+                              :metiers ;
+                     :descriptionMetier "Expert en gestion et protection de l'environnement." .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/FIC
+:FIC rdf:type owl:NamedIndividual ,
+              :parcours ;
+     :developpe :AnalyseFinanciere ,
+                :Audit ,
+                :Conseil ;
+     :enseigne :Comptabilite ,
+               :Droit ,
+               :Economie ,
+               :FinancePublique ,
+               :Marketing ,
+               :OrganisationEntreprise ,
+               :TechniqueBancaire ;
+     :necessite :BasesComptabilite ,
+                :BasesEconomie ;
+     :prepareA :AnalysteFinancier ,
+               :AuditeurSI ,
+               :ConsultantSI ;
+     :dureeFormation 2 ;
+     :descriptionParcours "Finance, Ingénierie et Conseil" .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/Finance
+:Finance rdf:type owl:NamedIndividual ,
+                  :centreInterets .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/FinancePublique
+:FinancePublique rdf:type owl:NamedIndividual ,
+                          :matieres ;
+                 :sousMatiereDe :Economie .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/Fiscalite
+:Fiscalite rdf:type owl:NamedIndividual ,
+                    :matieres ;
+           :sousMatiereDe :Economie .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/FormationAffaires
+:FormationAffaires rdf:type owl:NamedIndividual ,
+                            :formation ;
+                   :comporteMention :MentionTechniquesDesAffaires ;
+                   :descriptionFormation "Formation en Techniques des Affaires" .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/FormationBiotechnologie
+:FormationBiotechnologie rdf:type owl:NamedIndividual ,
+                                  :formation ;
+                         :comporteMention :MentionBiotcehnologieEtAgronomie ;
+                         :descriptionFormation "Formation en Biotechnologie et Agronomie" .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/FormationGenieCivil
+:FormationGenieCivil rdf:type owl:NamedIndividual ,
+                              :formation ;
+                     :comporteMention :MentionGenieIndustrielleEtCivil ;
+                     :descriptionFormation "Formation en Génie Industrielle et Civil" .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/FormationInformatique
+:FormationInformatique rdf:type owl:NamedIndividual ,
+                                :formation ;
+                       :comporteMention :MentionInformatiquesEtTelecommunications ;
+                       :descriptionFormation "Formation en Informatique et Télécommunications" .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/FormationTourisme
+:FormationTourisme rdf:type owl:NamedIndividual ,
+                            :formation ;
+                   :comporteMention :MentionTechniqueDuTourisme ;
+                   :descriptionFormation "Formation en Techniques du Tourisme" .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/Francais
+:Francais rdf:type owl:NamedIndividual ,
+                   :matieres .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/FrancaisProfessionnel
+:FrancaisProfessionnel rdf:type owl:NamedIndividual ,
+                                :competences .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/GCA
+:GCA rdf:type owl:NamedIndividual ,
+              :parcours ;
+     :developpe :CalculStructure ,
+                :ConceptionBatiment ,
+                :Topographie ;
+     :enseigne :Assainissement ,
+               :Autocad ,
+               :DessinTechnique ,
+               :Geologie ,
+               :Hydraulique ,
+               :OuvragesMetalliques ,
+               :Thermodynamique ;
+     :necessite :BasesDessinTechnique ,
+                :BasesMathematiques ;
+     :prepareA :ChefChantier ,
+               :IngenieurGenieCivil ,
+               :TechnicienGenieCivil ;
+     :dureeFormation 2 ;
+     :descriptionParcours "Génie Civil et Aménagement" .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/Genetique
+:Genetique rdf:type owl:NamedIndividual ,
+                    :matieres ;
+           :sousMatiereDe :Biologie .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/GenieCivil
+:GenieCivil rdf:type owl:NamedIndividual ,
+                     :centreInterets .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/GenieIndustriel
+:GenieIndustriel rdf:type owl:NamedIndividual ,
+                          :centreInterets .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/Geographie
+:Geographie rdf:type owl:NamedIndividual ,
+                     :centreInterets .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/GeographieTouristique
+:GeographieTouristique rdf:type owl:NamedIndividual ,
+                                :matieres ;
+                       :sousMatiereDe :Tourisme .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/Geologie
+:Geologie rdf:type owl:NamedIndividual ,
+                   :matieres ;
+          :sousMatiereDe :Agriculture .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/Geometrie
+:Geometrie rdf:type owl:NamedIndividual ,
+                    :matieres ;
+           :sousMatiereDe :Mathematiques .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/Gestion
+:Gestion rdf:type owl:NamedIndividual ,
+                  :centreInterets ,
+                  :matieres ;
+         :sousMatiereDe :Economie .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/GestionAdministrative
+:GestionAdministrative rdf:type owl:NamedIndividual ,
+                                :competences .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/GestionBudgetaire
+:GestionBudgetaire rdf:type owl:NamedIndividual ,
+                            :competences .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/GestionChantier
+:GestionChantier rdf:type owl:NamedIndividual ,
+                          :competences .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/GestionComptable
+:GestionComptable rdf:type owl:NamedIndividual ,
+                           :competences .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/GestionEntreprise
+:GestionEntreprise rdf:type owl:NamedIndividual ,
+                            :competences .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/GestionEquipe
+:GestionEquipe rdf:type owl:NamedIndividual ,
+                        :competences .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/GestionExploitationAgricole
+:GestionExploitationAgricole rdf:type owl:NamedIndividual ,
+                                      :competences .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/GestionMaintenance
+:GestionMaintenance rdf:type owl:NamedIndividual ,
+                             :competences .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/GestionProjet
+:GestionProjet rdf:type owl:NamedIndividual ,
+                        :competences ;
+               :etreRequisePour :BusinessAnalyst ,
+                                :ChefProjetInformatique .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/GestionReseaux
+:GestionReseaux rdf:type owl:NamedIndividual ,
+                         :competences .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/GestionRessources
+:GestionRessources rdf:type owl:NamedIndividual ,
+                            :competences .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/GestionRessourcesNaturelles
+:GestionRessourcesNaturelles rdf:type owl:NamedIndividual ,
+                                      :competences .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/GestionSol
+:GestionSol rdf:type owl:NamedIndividual ,
+                     :competences .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/GestionTemps
+:GestionTemps rdf:type owl:NamedIndividual ,
+                       :competences .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/GestionnaireEntreprise
+:GestionnaireEntreprise rdf:type owl:NamedIndividual ,
+                                 :metiers ;
+                        :descriptionMetier "Gère et dirige les opérations d'une entreprise." .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/HTMLCSS
+:HTMLCSS rdf:type owl:NamedIndividual ,
+                  :matieres ;
+         :sousMatiereDe :Informatique .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/Histoire
+:Histoire rdf:type owl:NamedIndividual ,
+                   :centreInterets .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/HistoireGeographie
+:HistoireGeographie rdf:type owl:NamedIndividual ,
+                             :matieres .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/Hotellerie
+:Hotellerie rdf:type owl:NamedIndividual ,
+                     :centreInterets ,
+                     :matieres ;
+            :sousMatiereDe :Tourisme .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/Hydraulique
+:Hydraulique rdf:type owl:NamedIndividual ,
+                      :matieres ;
+             :sousMatiereDe :Agriculture .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/Hygiene
+:Hygiene rdf:type owl:NamedIndividual ,
+                  :matieres ;
+         :sousMatiereDe :Agriculture .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/IAA
+:IAA rdf:type owl:NamedIndividual ,
+              :parcours ;
+     :descriptionParcours "Industries Agroalimentaires (fusionné dans BIO)" .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/ICMP
+:ICMP rdf:type owl:NamedIndividual ,
+               :parcours ;
+      :developpe :AnalyseQuantitative ,
+                 :Experimentation ;
+      :enseigne :Autocad ,
+                :Chimie ,
+                :Electricite ,
+                :Petrologie ,
+                :Thermophysique ;
+      :necessite :BasesChimie ,
+                 :BasesPhysique ;
+      :prepareA :ChefChantier ,
+                :IngenieurIndustriel ;
+      :dureeFormation 2 ;
+      :descriptionParcours "Industrie Chimique et Matériaux Polymères" .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/IGGLIA
+:IGGLIA rdf:type owl:NamedIndividual ,
+                 :parcours ;
+        :developpe :BaseDeDonnees ,
+                   :DeveloppementWeb ,
+                   :GestionProjet ,
+                   :Programmation ,
+                   :RaisonnementLogique ;
+        :enseigne :Algebre ,
+                  :Analyse ,
+                  :BaseDeDonnees ,
+                  :Comptabilite ,
+                  :Francais ,
+                  :InformatiqueScientifique ,
+                  :LangageC ,
+                  :MathematiquesDiscretes ,
+                  :MathematiquesFinancieres ,
+                  :OrganisationEntreprise ,
+                  :ProbabilitesStatistiques ,
+                  :StructuresDonnees ;
+        :necessite :BasesInformatiques ,
+                   :BasesMathematiques ,
+                   :BasesProgrammation ;
+        :prepareA :AdministrateurBaseDeDonnees ,
+                  :ChefProjetInformatique ,
+                  :DeveloppeurLogiciel ,
+                  :DeveloppeurMobile ,
+                  :DeveloppeurWeb ;
+        :dureeFormation 2 ;
+        :descriptionParcours "Informatique de Gestion, Génie Logiciel et Intelligence Artificielle" .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/IMTICIA
+:IMTICIA rdf:type owl:NamedIndividual ,
+                  :parcours ;
+         :developpe :DeveloppementWeb ,
+                    :Programmation ;
+         :enseigne :HTMLCSS ,
+                   :InformatiqueScientifique ,
+                   :LangageC ,
+                   :MathematiquesDiscretes ,
+                   :Musique ,
+                   :ProbabilitesStatistiques ,
+                   :StructuresDonnees ;
+         :necessite :BasesInformatiques ,
+                    :BasesMathematiques ;
+         :prepareA :AnalysteFonctionnel ,
+                   :DeveloppeurWeb ;
+         :dureeFormation 2 ;
+         :descriptionParcours "Informatique, Multimédia, Télécommunications et Ingénierie des Connaissances" .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/ISAIA
+:ISAIA rdf:type owl:NamedIndividual ,
+                :parcours ;
+       :developpe :AnalyseDonnees ,
+                  :IntelligenceArtificielle ,
+                  :Programmation ,
+                  :Statistiques ;
+       :enseigne :Algebre ,
+                 :Analyse ,
+                 :BaseDeDonnees ,
+                 :Francais ,
+                 :HTMLCSS ,
+                 :InformatiqueScientifique ,
+                 :LangageC ,
+                 :MacroeconomieMicroeconomie ,
+                 :MathematiquesDiscretes ,
+                 :StatistiquesAppliquees ,
+                 :StructuresDonnees ;
+       :necessite :BasesInformatiques ,
+                  :BasesMathematiques ,
+                  :RaisonnementLogiquePrerequis ;
+       :prepareA :DataAnalyst ,
+                 :DataScientist ,
+                 :IngenieurIntelligenceArtificielle ,
+                 :IngenieurMachineLearning ;
+       :dureeFormation 2 ;
+       :descriptionParcours "Intelligence Artificielle et Science des Données" .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/Informatique
+:Informatique rdf:type owl:NamedIndividual ,
+                       :centreInterets ,
+                       :matieres .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/InformatiqueScientifique
+:InformatiqueScientifique rdf:type owl:NamedIndividual ,
+                                   :matieres ;
+                          :sousMatiereDe :Informatique .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/IngenieurAgronome
+:IngenieurAgronome rdf:type owl:NamedIndividual ,
+                            :metiers ;
+                   :descriptionMetier "Ingénieur spécialisé en agronomie et production agricole." .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/IngenieurAutomatisme
+:IngenieurAutomatisme rdf:type owl:NamedIndividual ,
+                               :metiers ;
+                      :descriptionMetier "Conçoit et installe des systèmes automatisés." .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/IngenieurCybersecurite
+:IngenieurCybersecurite rdf:type owl:NamedIndividual ,
+                                 :metiers ;
+                        :descriptionMetier "Ingénieur spécialisé en sécurité des systèmes." .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/IngenieurElectricien
+:IngenieurElectricien rdf:type owl:NamedIndividual ,
+                               :metiers ;
+                      :descriptionMetier "Ingénieur spécialisé en électricité et énergie." .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/IngenieurElectromecanique
+:IngenieurElectromecanique rdf:type owl:NamedIndividual ,
+                                    :metiers ;
+                           :descriptionMetier "Ingénieur spécialisé en mécanique et électricité." .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/IngenieurEnvironnement
+:IngenieurEnvironnement rdf:type owl:NamedIndividual ,
+                                 :metiers ;
+                        :descriptionMetier "Ingénieur spécialisé en environnement et développement durable." .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/IngenieurGenieCivil
+:IngenieurGenieCivil rdf:type owl:NamedIndividual ,
+                              :metiers ;
+                     :descriptionMetier "Ingénieur spécialisé en construction et génie civil." .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/IngenieurIndustriel
+:IngenieurIndustriel rdf:type owl:NamedIndividual ,
+                              :metiers ;
+                     :descriptionMetier "Ingénieur spécialisé en industrie et production." .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/IngenieurIntelligenceArtificielle
+:IngenieurIntelligenceArtificielle rdf:type owl:NamedIndividual ,
+                                            :metiers ;
+                                   :descriptionMetier "Conçoit et développe des solutions d'intelligence artificielle." .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/IngenieurLogiciel
+:IngenieurLogiciel rdf:type owl:NamedIndividual ,
+                            :metiers ;
+                   :descriptionMetier "Ingénieur spécialisé en conception et développement logiciel." .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/IngenieurMachineLearning
+:IngenieurMachineLearning rdf:type owl:NamedIndividual ,
+                                   :metiers ;
+                          :descriptionMetier "Développe et met en œuvre des modèles d'apprentissage automatique." .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/IngenieurMecanicien
+:IngenieurMecanicien rdf:type owl:NamedIndividual ,
+                              :metiers ;
+                     :descriptionMetier "Ingénieur spécialisé en mécanique et conception." .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/IngenieurReseaux
+:IngenieurReseaux rdf:type owl:NamedIndividual ,
+                           :metiers ;
+                  :descriptionMetier "Ingénieur spécialisé en réseaux et télécommunications." .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/IngenieurStructures
+:IngenieurStructures rdf:type owl:NamedIndividual ,
+                              :metiers ;
+                     :descriptionMetier "Ingénieur spécialisé en calcul de structures." .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/Instrumentation
+:Instrumentation rdf:type owl:NamedIndividual ,
+                          :competences .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/IntelligenceArtificielle
+:IntelligenceArtificielle rdf:type owl:NamedIndividual ,
+                                   :centreInterets ,
+                                   :competences ;
+                          :etreRequisePour :IngenieurIntelligenceArtificielle ,
+                                           :IngenieurMachineLearning .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/InterpretationResultats
+:InterpretationResultats rdf:type owl:NamedIndividual ,
+                                  :competences .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/LangageC
+:LangageC rdf:type owl:NamedIndividual ,
+                   :matieres ;
+          :sousMatiereDe :Informatique .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/Langues
+:Langues rdf:type owl:NamedIndividual ,
+                  :centreInterets .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/Leadership
+:Leadership rdf:type owl:NamedIndividual ,
+                     :competences .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/LecturePlan
+:LecturePlan rdf:type owl:NamedIndividual ,
+                      :competences .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/Litterature
+:Litterature rdf:type owl:NamedIndividual ,
+                      :centreInterets .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/Logique
+:Logique rdf:type owl:NamedIndividual ,
+                  :matieres .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/MachineLearning
+:MachineLearning rdf:type owl:NamedIndividual ,
+                          :competences .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/MacroeconomieMicroeconomie
+:MacroeconomieMicroeconomie rdf:type owl:NamedIndividual ,
+                                     :matieres ;
+                            :sousMatiereDe :Economie .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/Maintenance
+:Maintenance rdf:type owl:NamedIndividual ,
+                      :matieres ;
+             :sousMatiereDe :Technologie .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/MaintenanceIndustrielle
+:MaintenanceIndustrielle rdf:type owl:NamedIndividual ,
+                                  :competences .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/Marketing
+:Marketing rdf:type owl:NamedIndividual ,
+                    :centreInterets ,
+                    :matieres ;
+           :sousMatiereDe :Economie .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/Mathematiques
+:Mathematiques rdf:type owl:NamedIndividual ,
+                        :centreInterets ,
+                        :matieres .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/MathematiquesDiscretes
+:MathematiquesDiscretes rdf:type owl:NamedIndividual ,
+                                 :matieres ;
+                        :sousMatiereDe :Mathematiques .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/MathematiquesFinancieres
+:MathematiquesFinancieres rdf:type owl:NamedIndividual ,
+                                   :matieres ;
+                          :sousMatiereDe :Mathematiques .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/Mecanique
+:Mecanique rdf:type owl:NamedIndividual ,
+                    :centreInterets ,
+                    :matieres ;
+           :sousMatiereDe :Physique .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/MecaniqueIndustrielle
+:MecaniqueIndustrielle rdf:type owl:NamedIndividual ,
+                                :competences .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/MentionBiotcehnologieEtAgronomie
+:MentionBiotcehnologieEtAgronomie rdf:type owl:NamedIndividual ,
+                                           :mention ;
+                                  :comporteParcours :BIO ;
+                                  :descriptionMention "Biotechnologie et Agronomie" .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/MentionGenieIndustrielleEtCivil
+:MentionGenieIndustrielleEtCivil rdf:type owl:NamedIndividual ,
+                                          :mention ;
+                                 :comporteParcours :EMII ,
+                                                   :GCA ,
+                                                   :ICMP ;
+                                 :descriptionMention "Génie Industrielle et Civil" .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/MentionInformatiquesEtTelecommunications
+:MentionInformatiquesEtTelecommunications rdf:type owl:NamedIndividual ,
+                                                   :mention ;
+                                          :comporteParcours :ESIIA ,
+                                                            :IGGLIA ,
+                                                            :IMTICIA ,
+                                                            :ISAIA ;
+                                          :descriptionMention "Informatiques et Télécommunications" .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/MentionTechniqueDuTourisme
+:MentionTechniqueDuTourisme rdf:type owl:NamedIndividual ,
+                                     :mention ;
+                            :comporteParcours :TEH ;
+                            :descriptionMention "Techniques du Tourisme" .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/MentionTechniquesDesAffaires
+:MentionTechniquesDesAffaires rdf:type owl:NamedIndividual ,
+                                       :mention ;
+                              :comporteParcours :CAA ,
+                                                :DTJA ,
+                                                :EMP ,
+                                                :FIC ;
+                              :descriptionMention "Techniques des Affaires" .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/MethodologieScientifique
+:MethodologieScientifique rdf:type owl:NamedIndividual ,
+                                   :competences .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/Metre
+:Metre rdf:type owl:NamedIndividual ,
+                :competences .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/Microbiologie
+:Microbiologie rdf:type owl:NamedIndividual ,
+                        :matieres ;
+               :sousMatiereDe :Biologie .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/Modelisation
+:Modelisation rdf:type owl:NamedIndividual ,
+                       :competences .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/Musique
+:Musique rdf:type owl:NamedIndividual ,
+                  :centreInterets ,
+                  :matieres .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/NutritionHumaine
+:NutritionHumaine rdf:type owl:NamedIndividual ,
+                           :matieres ;
+                  :sousMatiereDe :Agriculture .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/Organisation
+:Organisation rdf:type owl:NamedIndividual ,
+                       :competences .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/OrganisationEntreprise
+:OrganisationEntreprise rdf:type owl:NamedIndividual ,
+                                 :matieres ;
+                        :sousMatiereDe :Economie .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/OuvragesMetalliques
+:OuvragesMetalliques rdf:type owl:NamedIndividual ,
+                              :matieres ;
+                     :sousMatiereDe :Technologie .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/PIP
+:PIP rdf:type owl:NamedIndividual ,
+              :parcours ;
+     :descriptionParcours "Production et Industries du Pays (fusionné dans BIO)" .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/Petrologie
+:Petrologie rdf:type owl:NamedIndividual ,
+                     :matieres ;
+            :sousMatiereDe :Agriculture .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/Philosophie
+:Philosophie rdf:type owl:NamedIndividual ,
+                      :matieres .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/PhysiologieAnimale
+:PhysiologieAnimale rdf:type owl:NamedIndividual ,
+                             :matieres ;
+                    :sousMatiereDe :Biologie .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/PhysiologieVegetale
+:PhysiologieVegetale rdf:type owl:NamedIndividual ,
+                              :matieres ;
+                     :sousMatiereDe :Biologie .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/Physique
+:Physique rdf:type owl:NamedIndividual ,
+                   :matieres .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/PhysiqueChimie
+:PhysiqueChimie rdf:type owl:NamedIndividual ,
+                         :centreInterets ,
+                         :matieres ;
+                :sousMatiereDe :Physique .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/Planification
+:Planification rdf:type owl:NamedIndividual ,
+                        :competences .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/PresentationOrale
+:PresentationOrale rdf:type owl:NamedIndividual ,
+                            :competences .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/PriseDecision
+:PriseDecision rdf:type owl:NamedIndividual ,
+                        :competences .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/Probabilites
+:Probabilites rdf:type owl:NamedIndividual ,
+                       :matieres ;
+              :sousMatiereDe :Mathematiques .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/ProbabilitesStatistiques
+:ProbabilitesStatistiques rdf:type owl:NamedIndividual ,
+                                   :matieres ;
+                          :sousMatiereDe :Mathematiques .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/ProductionAgricole
+:ProductionAgricole rdf:type owl:NamedIndividual ,
+                             :competences ,
+                             :matieres ;
+                    :sousMatiereDe :Agriculture .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/ProductionVegetale
+:ProductionVegetale rdf:type owl:NamedIndividual ,
+                             :competences .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/Programmation
+:Programmation rdf:type owl:NamedIndividual ,
+                        :centreInterets ,
+                        :competences ;
+               :etreRequisePour :DeveloppeurLogiciel ,
+                                :DeveloppeurMobile ,
+                                :DeveloppeurWeb ,
+                                :IngenieurIntelligenceArtificielle ,
+                                :IngenieurMachineLearning .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/ProgrammationMatieres
+:ProgrammationMatieres rdf:type owl:NamedIndividual ,
+                                :matieres ;
+                       :sousMatiereDe :Informatique .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/ProgrammationWeb
+:ProgrammationWeb rdf:type owl:NamedIndividual ,
+                           :competences .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/ProtectionCultures
+:ProtectionCultures rdf:type owl:NamedIndividual ,
+                             :competences .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/RaisonnementAnalytique
+:RaisonnementAnalytique rdf:type owl:NamedIndividual ,
+                                 :competences .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/RaisonnementLogique
+:RaisonnementLogique rdf:type owl:NamedIndividual ,
+                              :competences ;
+                     :etreRequisePour :DataScientist ,
+                                      :DeveloppeurLogiciel ,
+                                      :IngenieurIntelligenceArtificielle .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/RaisonnementLogiquePrerequis
+:RaisonnementLogiquePrerequis rdf:type owl:NamedIndividual ,
+                                       :prerequis .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/RechercheScientifique
+:RechercheScientifique rdf:type owl:NamedIndividual ,
+                                :centreInterets ,
+                                :competences .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/Redaction
+:Redaction rdf:type owl:NamedIndividual ,
+                    :competences .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/RedactionAdministrative
+:RedactionAdministrative rdf:type owl:NamedIndividual ,
+                                  :competences .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/Reseaux
+:Reseaux rdf:type owl:NamedIndividual ,
+                  :centreInterets .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/ResolutionProblemes
+:ResolutionProblemes rdf:type owl:NamedIndividual ,
+                              :competences .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/ResponsableAdministratif
+:ResponsableAdministratif rdf:type owl:NamedIndividual ,
+                                   :metiers ;
+                          :descriptionMetier "Responsable des services administratifs." .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/ResponsableFinancier
+:ResponsableFinancier rdf:type owl:NamedIndividual ,
+                               :metiers ;
+                      :descriptionMetier "Responsable de la gestion financière." .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/ResponsableMaintenance
+:ResponsableMaintenance rdf:type owl:NamedIndividual ,
+                                 :metiers ;
+                        :descriptionMetier "Responsable de la maintenance industrielle." .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/ResponsableProductionAgricole
+:ResponsableProductionAgricole rdf:type owl:NamedIndividual ,
+                                        :metiers ;
+                               :descriptionMetier "Responsable de la production agricole." .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/Robotique
+:Robotique rdf:type owl:NamedIndividual ,
+                    :centreInterets .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/S
+:S rdf:type owl:NamedIndividual .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/SVT
+:SVT rdf:type owl:NamedIndividual ,
+              :centreInterets ,
+              :matieres ;
+     :sousMatiereDe :Biologie .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/ScienceAgricole
+:ScienceAgricole rdf:type owl:NamedIndividual ,
+                          :matieres ;
+                 :sousMatiereDe :Agriculture .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/ScienceDesAliments
+:ScienceDesAliments rdf:type owl:NamedIndividual ,
+                             :matieres ;
+                    :sousMatiereDe :Agriculture .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/SciencesBiologiques
+:SciencesBiologiques rdf:type owl:NamedIndividual ,
+                              :matieres ;
+                     :sousMatiereDe :Biologie .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/SciencesIndustrielles
+:SciencesIndustrielles rdf:type owl:NamedIndividual ,
+                                :matieres ;
+                       :sousMatiereDe :Technologie .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/SciencesNaturelles
+:SciencesNaturelles rdf:type owl:NamedIndividual ,
+                             :matieres ;
+                    :sousMatiereDe :Biologie .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/SitesTouristiques
+:SitesTouristiques rdf:type owl:NamedIndividual ,
+                            :matieres ;
+                   :sousMatiereDe :Tourisme .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/Sport
+:Sport rdf:type owl:NamedIndividual ,
+                :centreInterets .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/Statistiques
+:Statistiques rdf:type owl:NamedIndividual ,
+                       :competences ,
+                       :matieres ;
+              :etreRequisePour :DataAnalyst ,
+                               :DataScientist ;
+              :sousMatiereDe :Mathematiques .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/StatistiquesAppliquees
+:StatistiquesAppliquees rdf:type owl:NamedIndividual ,
+                                 :matieres ;
+                        :sousMatiereDe :Mathematiques .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/StatistiquesPrerequis
+:StatistiquesPrerequis rdf:type owl:NamedIndividual ,
+                                :prerequis .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/StructureDesOrdinateurs
+:StructureDesOrdinateurs rdf:type owl:NamedIndividual ,
+                                  :matieres ;
+                         :sousMatiereDe :Informatique .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/StructuresDonnees
+:StructuresDonnees rdf:type owl:NamedIndividual ,
+                            :matieres ;
+                   :sousMatiereDe :Informatique .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/SuiviTravaux
+:SuiviTravaux rdf:type owl:NamedIndividual ,
+                       :competences .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/TEH
+:TEH rdf:type owl:NamedIndividual ,
+              :parcours ;
+     :developpe :AnalyseEnvironnementale ,
+                :Communication ,
+                :GestionRessourcesNaturelles ;
+     :enseigne :Botanique ,
+               :Ecologie ,
+               :Economie ,
+               :Environnement ,
+               :Hygiene ,
+               :Marketing ,
+               :NutritionHumaine ,
+               :OrganisationEntreprise ,
+               :ScienceDesAliments ,
+               :SitesTouristiques ;
+     :necessite :BasesEconomie ,
+                :ConnaissancesEnvironnementales ;
+     :prepareA :ExpertEnvironnement ,
+               :GestionnaireEntreprise ;
+     :dureeFormation 2 ;
+     :descriptionParcours "Tourisme, Environnement et Hôtellerie" .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/TechnicienAgricole
+:TechnicienAgricole rdf:type owl:NamedIndividual ,
+                             :metiers ;
+                    :descriptionMetier "Technicien spécialisé en agriculture." .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/TechnicienGenieCivil
+:TechnicienGenieCivil rdf:type owl:NamedIndividual ,
+                               :metiers ;
+                      :descriptionMetier "Technicien spécialisé en génie civil." .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/TechnicienMaintenance
+:TechnicienMaintenance rdf:type owl:NamedIndividual ,
+                                :metiers ;
+                       :descriptionMetier "Technicien spécialisé en maintenance industrielle." .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/TechniqueBancaire
+:TechniqueBancaire rdf:type owl:NamedIndividual ,
+                            :matieres ;
+                   :sousMatiereDe :Economie .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/Techniques
+:Techniques rdf:type owl:NamedIndividual .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/Technologie
+:Technologie rdf:type owl:NamedIndividual ,
+                      :centreInterets ,
+                      :matieres .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/Thermodynamique
+:Thermodynamique rdf:type owl:NamedIndividual ,
+                          :matieres ;
+                 :sousMatiereDe :Physique .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/Thermophysique
+:Thermophysique rdf:type owl:NamedIndividual ,
+                         :matieres ;
+                :sousMatiereDe :Physique .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/Topographie
+:Topographie rdf:type owl:NamedIndividual ,
+                      :competences .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/Tourisme
+:Tourisme rdf:type owl:NamedIndividual ,
+                   :centreInterets ,
+                   :matieres .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/TravailCollaboratif
+:TravailCollaboratif rdf:type owl:NamedIndividual ,
+                              :competences .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/TravailEquipe
+:TravailEquipe rdf:type owl:NamedIndividual ,
+                        :competences .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/VeilleJuridique
+:VeilleJuridique rdf:type owl:NamedIndividual ,
+                          :competences .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/Virologie
+:Virologie rdf:type owl:NamedIndividual ,
+                    :matieres ;
+           :sousMatiereDe :Biologie .
+
+
+###  http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/VisualisationDonnees
+:VisualisationDonnees rdf:type owl:NamedIndividual ,
+                               :competences .
+
+
+###  Generated by the OWL API (version 4.5.29.2024-05-13T12:11:03Z) https://github.com/owlcs/owlapi

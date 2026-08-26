@@ -6,10 +6,10 @@ from sqlalchemy import text
 from sqlalchemy.orm import Session
 
 from app.agent.agent import process_ticket
-from app.api.routes import auth
+from app.api.routes import auth, ontology
 from app.core.database import engine, get_db
 from app.schemas_tickets.ticket import AgentResponseSchema, TicketInput
-
+from app.services.recommandation_service import recommandation_service
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -20,6 +20,12 @@ async def lifespan(app: FastAPI):
             print("🟢 [DATABASE] Connexion à PostgreSQL réussie avec succès !")
     except Exception as e:
         print(f"🔴 [DATABASE] Échec de la connexion à PostgreSQL : {e}")
+    try:
+        recommandation_service.load_ontology("backend\\app\\ontology\\OrientIA.ttl")
+        print("🟢 [RDFLIB] Ontologie OrientIA.ttl chargée avec succès !")
+    except Exception as e:
+        print(f"🔴 [RDFLIB] Échec du chargement de l'ontologie : {e}")
+
     yield
 
 
@@ -40,6 +46,7 @@ app.add_middleware(
 
 # Montage du routeur sous /api/auth pour correspondre à tokenUrl="/api/auth/login" dans security.py
 app.include_router(auth.routeur, prefix="/api/auth", tags=["Authentification"])
+app.include_router(ontology.routeur, prefix="/api/recommandation", tags=["ONTOLOGY"])
 
 
 @app.get("/", tags=["Health"])
