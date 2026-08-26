@@ -25,7 +25,7 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(
     title="ORIENT'IA - IT Support Agent",
-    description="Agent d'assistance IT intelligent (LLM + RAG + Tools + Guardrails)",
+    description="Agent IA d'assistance IT avec persistance et journalisation",
     version="1.0.0",
     lifespan=lifespan,
 )
