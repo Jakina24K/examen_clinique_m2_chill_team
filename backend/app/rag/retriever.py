@@ -1,71 +1,107 @@
-# import os
-# from typing import List
-# import chromadb
-# from dotenv import load_dotenv
-# from app.schemas.ticket import SourceRAG
+"""
+app/rag/retriever.py
+---------------------
+Recherche vectorielle dans ChromaDB avec scores de pertinence exposés.
 
-# load_dotenv()
+Le sujet ORIENT'IA exige explicitement des traces incluant "les passages
+récupérés" et "les scores de recherche" (section Observabilité) : ce module
+retourne donc toujours le score, jamais seulement le texte brut.
+"""
 
-# PERSIST_DIR = os.getenv("CHROMA_PERSIST_DIR", "./chroma_db")
-# GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
+import os
+import logging
+from dataclasses import dataclass, asdict
+from typing import List, Optional
 
-# def search_knowledge_base(query: str, top_k: int = 2) -> List[SourceRAG]:
-#     """Recherche RAG résiliente dans ChromaDB."""
-#     try:
-#         if not os.path.exists(PERSIST_DIR):
-#             return []
+from langchain_huggingface import HuggingFaceEmbeddings
+from langchain_chroma import Chroma
 
-#         client = chromadb.PersistentClient(path=PERSIST_DIR)
-        
-#         try:
-#             collection = client.get_collection(name="knowledge_base")
-#         except Exception:
-#             return []
+logger = logging.getLogger(__name__)
 
-#         results = collection.query(
-#             query_texts=[query],
-#             n_results=top_k
-#         )
+PERSIST_DIR = os.getenv("CHROMA_PERSIST_DIR", "./chroma_db")
+COLLECTION_NAME = "orientia_knowledge"
+EMBEDDING_MODEL = "sentence-transformers/all-MiniLM-L6-v2"
 
-#         sources = []
-#         if results and results.get('documents') and len(results['documents']) > 0:
-#             for i in range(len(results['documents'][0])):
-#                 doc_text = results['documents'][0][i]
-#                 metadata = results['metadatas'][0][i] if results.get('metadatas') else {}
-#                 distances = results.get('distances')
-#                 distance = distances[0][i] if distances and len(distances) > 0 else 0.2
-                
-#                 score = max(0.0, min(1.0, round(1.0 - (distance / 2), 2)))
+# Seuil sous lequel un résultat est jugé non pertinent. À calibrer sur votre jeu
+# d'évaluation (voir app/evaluation/eval_rag.py) plutôt que laissé arbitraire.
+RELEVANCE_THRESHOLD = 0.35
 
-#                 sources.append(SourceRAG(
-#                     doc_id=metadata.get("doc_id", "KB-UNK"),
-#                     titre=metadata.get("titre", "Document"),
-#                     score_pertinence=score,
-#                     extrait=doc_text
-#                 ))
-#         return sources
-#     except Exception as e:
-#         print(f"Avertissement RAG (mode dégradé) : {e}")
-#         # En cas d'erreur réseau/Chroma, renvoie un mock RAG pour ne pas bloquer l'agent
-#         return [
-#             SourceRAG(
-#                 doc_id="KB-NET-01",
-#                 titre="Guide Dépannage VPN",
-#                 score_pertinence=0.85,
-#                 extrait="Procédure VPN: En cas de problème de connexion VPN, vérifier l'état du réseau local et redémarrer le client VPN."
-#             )
-#         ]
+_embeddings = None
+_vectorstore = None
 
-from typing import List
-from app.schemas_tickets.ticket import SourceRAG
 
-def search_knowledge_base(query: str, top_k: int = 2) -> List[SourceRAG]:
-    """Mock RAG instantané pour valider le pipeline sans dépendre de téléchargements ONNX."""
-    return [
-        SourceRAG(
-            doc_id="KB-NET-01",
-            titre="Guide Dépannage VPN",
-            score_pertinence=0.88,
-            extrait="En cas de problème VPN: Vérifier la connexion locale, puis redémarrer le client VPN."
+@dataclass
+class SourceRAG:
+    """Contrat de sortie consommé par l'agent et affiché comme citation."""
+    doc_id: str
+    titre: str
+    source_file: str
+    score_pertinence: float
+    extrait: str
+
+    def to_dict(self):
+        return asdict(self)
+
+
+def _get_vectorstore() -> Chroma:
+    """Singleton paresseux : évite de recharger le modèle d'embedding à chaque appel."""
+    global _embeddings, _vectorstore
+    if _vectorstore is None:
+        _embeddings = HuggingFaceEmbeddings(
+            model_name=EMBEDDING_MODEL,
+            model_kwargs={"device": "cpu"},
+            encode_kwargs={"normalize_embeddings": True},
         )
-    ]
+        _vectorstore = Chroma(
+            collection_name=COLLECTION_NAME,
+            embedding_function=_embeddings,
+            persist_directory=PERSIST_DIR,
+            collection_metadata={"hnsw:space": "cosine"},
+        )
+    return _vectorstore
+
+
+def search_knowledge_base(
+    query: str,
+    top_k: int = 4,
+    min_score: Optional[float] = None,
+) -> List[SourceRAG]:
+    """
+    Recherche les top_k chunks les plus pertinents pour `query`.
+
+    Retourne une liste vide (jamais une exception) si la base est vide ou
+    absente : cela permet à l'agent de dire explicitement "information
+    absente du corpus" plutôt que de planter ou d'halluciner.
+    """
+    try:
+        vectorstore = _get_vectorstore()
+    except Exception as e:
+        logger.error(f"Base vectorielle inaccessible : {e}")
+        return []
+
+    try:
+        # Score normalisé 0-1 (0 = pas pertinent, 1 = pertinent) : plus interprétable
+        # qu'une distance brute, et directement citable dans la réponse finale.
+        results = vectorstore.similarity_search_with_relevance_scores(query, k=top_k)
+    except Exception as e:
+        logger.error(f"Erreur pendant la recherche RAG : {e}")
+        return []
+
+    threshold = min_score if min_score is not None else RELEVANCE_THRESHOLD
+    sources: List[SourceRAG] = []
+    for doc, score in results:
+        if score < threshold:
+            logger.info(f"Chunk écarté (score={score:.2f} < seuil={threshold})")
+            continue
+        sources.append(
+            SourceRAG(
+                doc_id=doc.metadata.get("chunk_id", "unknown"),
+                titre=doc.metadata.get("titre", "Document"),
+                source_file=doc.metadata.get("source_file", "inconnu"),
+                score_pertinence=round(float(score), 3),
+                extrait=doc.page_content.strip(),
+            )
+        )
+
+    logger.info(f"Requête='{query[:60]}...' -> {len(sources)}/{len(results)} chunks retenus")
+    return sources

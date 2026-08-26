@@ -5,10 +5,9 @@ from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy import text
 from sqlalchemy.orm import Session
 
-from app.agent.agent import process_ticket
-from app.api.routes import auth
+# from app.agent.agent import process_ticket
+from app.api.routes import auth, chat   
 from app.core.database import engine, get_db
-from app.schemas_tickets.ticket import AgentResponseSchema, TicketInput
 
 
 @asynccontextmanager
@@ -40,7 +39,7 @@ app.add_middleware(
 
 # Montage du routeur sous /api/auth pour correspondre à tokenUrl="/api/auth/login" dans security.py
 app.include_router(auth.routeur, prefix="/api/auth", tags=["Authentification"])
-
+app.include_router(chat.routeur, prefix="/api", tags=["Chat"])
 
 @app.get("/", tags=["Health"])
 def health_check():
@@ -58,18 +57,18 @@ def health_check_db(db: Session = Depends(get_db)):
         )
 
 
-@app.post(
-    "/api/tickets/process",
-    response_model=AgentResponseSchema,
-    tags=["Agent IT"],
-)
-def handle_ticket(ticket: TicketInput):
-    """Endpoint principal de traitement de ticket par l'agent IA."""
-    try:
-        start_time = time.time()
-        result = process_ticket(ticket)
-        execution_time = round(time.time() - start_time, 2)
-        print(f"Ticket {ticket.ticket_id} traité en {execution_time}s")
-        return result
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+# @app.post(
+#     "/api/tickets/process",
+#     response_model=AgentResponseSchema,
+#     tags=["Agent IT"],
+# )
+# def handle_ticket(ticket: TicketInput):
+#     """Endpoint principal de traitement de ticket par l'agent IA."""
+#     try:
+#         start_time = time.time()
+#         result = process_ticket(ticket)
+#         execution_time = round(time.time() - start_time, 2)
+#         print(f"Ticket {ticket.ticket_id} traité en {execution_time}s")
+#         return result
+#     except Exception as e:
+#         raise HTTPException(status_code=500, detail=str(e))

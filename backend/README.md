@@ -60,3 +60,7 @@ uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
 ```bash
 pytest -v
 ``` 
+6. **Màj requirements.txt :**
+```bash
+pip freeze > requirements.txt  
+``` 
