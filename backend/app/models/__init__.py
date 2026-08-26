@@ -1,1 +1,1 @@
-from app.models.utilisateur import RoleEnum, Utilisateur
+from app.models.utilisateur import  Utilisateur
