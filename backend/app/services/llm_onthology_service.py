@@ -3,7 +3,7 @@ from google import genai
 from google.genai import types
 from pydantic import BaseModel, Field
 from app.services.recommandation_prompt_service import recommandation_prompt_service
-
+from app.core.config import settings
 
 class ProfileExtractorSchema(BaseModel):
     competences: list[str] = Field(default=[], description="Liste des compétences/matières extraites et présentes dans l'ontologie")
@@ -32,11 +32,11 @@ def extract_profile_from_prompt(user_prompt: str) -> ProfileExtractorSchema:
     3. Si aucun terme ne correspond, laisse la liste vide [].
     """
 
-    api_key = os.environ.get("GEMINI_API_KEY")
-    if not api_key:
+    api_key_onto = os.environ.get(settings.GEMINI_API_KEY_ONTO,)
+    if not api_key_onto:
         raise ValueError("La clé GEMINI_API_KEY n'est pas définie dans l'environnement.")
 
-    client = genai.Client(api_key=api_key)
+    client = genai.Client(api_key=api_key_onto)
 
     response = client.models.generate_content(
         model="gemini-3.6-flash",
