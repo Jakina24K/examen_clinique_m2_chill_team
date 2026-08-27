@@ -10,6 +10,7 @@ import {
   Mail,
   UserRound,
 } from "lucide-react";
+import { login, register } from "@/lib/api";
 
 type AuthMode = "login" | "register";
 
@@ -130,7 +131,7 @@ export function LoginPage() {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(false);
 
-  const submit = (event: FormEvent) => {
+  const submit = async (event: FormEvent) => {
     event.preventDefault();
     const next: Record<string, string> = {};
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))
@@ -139,16 +140,23 @@ export function LoginPage() {
     setErrors(next);
     if (Object.keys(next).length) return;
     setLoading(true);
-
-    setTimeout(() => {
-      window.localStorage.setItem("user_token", "fake-jwt-token");
+    try {
+      const data = await login(email, password);
+      window.localStorage.setItem("user_token", data.token);
       window.localStorage.setItem(
         "orientia_user",
-        JSON.stringify({ name: "Aina M.", email }),
+        JSON.stringify({ email, role: data.role }),
       );
-      // Redirection vers dashboard
       window.location.href = "/dashboard";
-    }, 650);
+    } catch (error) {
+      setErrors({
+        form:
+          error instanceof Error
+            ? error.message
+            : "Le serveur est momentanément indisponible.",
+      });
+      setLoading(false);
+    }
   };
 
   const goToRegister = (e: React.MouseEvent) => {
@@ -159,6 +167,7 @@ export function LoginPage() {
   return (
     <AuthShell mode="login">
       <form className="auth-form" onSubmit={submit} noValidate>
+        {errors.form && <small className="auth-error">{errors.form}</small>}
         <Field
           label="Adresse e-mail"
           name="email"
@@ -212,7 +221,7 @@ export function RegisterPage() {
   const update = (name: keyof typeof values) => (value: string) =>
     setValues((current) => ({ ...current, [name]: value }));
 
-  const submit = (event: FormEvent) => {
+  const submit = async (event: FormEvent) => {
     event.preventDefault();
     const next: Record<string, string> = {};
     if (!values.nom) next.nom = "Le nom est obligatoire.";
@@ -226,20 +235,26 @@ export function RegisterPage() {
     setErrors(next);
     if (Object.keys(next).length) return;
     setLoading(true);
-
-    setTimeout(() => {
-      window.localStorage.setItem("user_token", "fake-jwt-token");
-      window.localStorage.setItem(
-        "orientia_user",
-        JSON.stringify({
-          nom: values.nom,
-          prenom: values.prenom,
-          email: values.email,
-        }),
+    try {
+      const user = await register(
+        values.nom,
+        values.prenom,
+        values.email,
+        values.password,
       );
-      // Redirection vers dashboard
+      const session = await login(values.email, values.password);
+      window.localStorage.setItem("user_token", session.token);
+      window.localStorage.setItem("orientia_user", JSON.stringify(user));
       window.location.href = "/dashboard";
-    }, 650);
+    } catch (error) {
+      setErrors({
+        form:
+          error instanceof Error
+            ? error.message
+            : "Le serveur est momentanément indisponible.",
+      });
+      setLoading(false);
+    }
   };
 
   const goToLogin = (e: React.MouseEvent) => {
@@ -250,6 +265,7 @@ export function RegisterPage() {
   return (
     <AuthShell mode="register">
       <form className="auth-form register-form" onSubmit={submit} noValidate>
+        {errors.form && <small className="auth-error">{errors.form}</small>}
         <div className="auth-form-row">
           <Field
             label="Nom"
