@@ -4,10 +4,13 @@ from typing import Dict, Any
 from google import genai
 from google.genai import types
 from ml.data.raw.prompt import get_prompt
+import os
+
+# api_key = os.environ.get("GEMINI_API_KEY_ML")
 
 
 # ⚠️ Il vaut mieux mettre la clé dans une variable d'environnement.
-client = genai.Client(api_key="AIzaSyD0iIguPvQ0tke0ka4koHaZjzBqXxwpPDc")
+client = genai.Client(api_key="AQ.Ab8RN6Kr4sjB-KmBAb3VuApYLAWlKlpS3eIpqoYhZjgQYsXxeA")
 
 
 def extract_orientation_data(text: str) -> Dict[str, Any]:
@@ -18,7 +21,7 @@ def extract_orientation_data(text: str) -> Dict[str, Any]:
 
     try:
         response = client.models.generate_content(
-            model="gemini-2.5-flash",
+            model="gemini-3.6-flash",
             contents=get_prompt(text),
             config=types.GenerateContentConfig(
                 response_mime_type="application/json", temperature=0

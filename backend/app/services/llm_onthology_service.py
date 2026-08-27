@@ -32,11 +32,11 @@ def extract_profile_from_prompt(user_prompt: str) -> ProfileExtractorSchema:
     3. Si aucun terme ne correspond, laisse la liste vide [].
     """
 
-    api_key = os.environ.get("GEMINI_API_KEY")
-    if not api_key:
-        raise ValueError("La clé GEMINI_API_KEY n'est pas définie dans l'environnement.")
+    # # api_key = os.environ.get("GEMINI_API_KEY_ONTOLOGY")
+    # if not api_key:
+    #     raise ValueError("La clé GEMINI_API_KEY n'est pas définie dans l'environnement.")
 
-    client = genai.Client(api_key=api_key)
+    client = genai.Client(api_key="AQ.Ab8RN6Kx5xE6Mysmv8ky2WENBZvWKqcBqk68zcUpTJS_Vv8hsg")
 
     response = client.models.generate_content(
         model="gemini-3.6-flash",

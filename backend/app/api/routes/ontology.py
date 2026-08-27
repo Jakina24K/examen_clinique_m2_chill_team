@@ -35,14 +35,12 @@ def get_recommandation_dynamique(profile: DynamicProfileInput):
         raise HTTPException(status_code=404, detail="Aucun parcours correspondant trouvé")
     return results
 
-class PromptInput(BaseModel):
-    prompt: str
 
 @routeur.post("/prompt")
-def get_recommandation_from_prompt(input_data: PromptInput):
+def get_recommandation_from_prompt(input_data: str):
     # 1. Extraction via Gemini
     try:
-        profile_extracted = extract_profile_from_prompt(input_data.prompt)
+        profile_extracted = extract_profile_from_prompt(input_data)
     except Exception as e:
         # Renvoie l'erreur exacte dans le JSON Swagger au lieu de crasher en 500
         raise HTTPException(
@@ -64,7 +62,7 @@ def get_recommandation_from_prompt(input_data: PromptInput):
 
     # 3. Réponse
     return {
-        "prompt_utilisateur": input_data.prompt,
+        "prompt_utilisateur": input_data,
         "profil_extrait": profile_extracted.model_dump(),
         "recommandations": results,
     }
