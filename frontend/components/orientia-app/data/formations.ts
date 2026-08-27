@@ -42,7 +42,7 @@ export const formations = [
     title: "Génie Industriel et Civil",
     tag: "Industrie · Construction",
     score: 85,
-    color: "orange",
+    color: "teal",
     paths: 3,
     parcours: ["EMII", "GCA", "ICMP"],
     parcoursDetails: {
@@ -72,7 +72,7 @@ export const formations = [
     title: "Biotechnologie et Agronomie",
     tag: "Sciences · Environnement",
     score: 78,
-    color: "green",
+    color: "bleu",
     paths: 4,
     parcours: [
       "BIO (actif)",
@@ -133,7 +133,7 @@ export const formations = [
     title: "Techniques des Affaires",
     tag: "Finance · Management",
     score: 81,
-    color: "navy",
+    color: "purple",
     paths: 4,
     parcours: ["CAA", "DTJA", "EMP", "FIC"],
     parcoursDetails: {

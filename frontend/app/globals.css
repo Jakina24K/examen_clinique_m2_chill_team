@@ -33,7 +33,7 @@
   --muted-foreground: rgba(255, 255, 255, 0.5);
   --border: rgba(255, 255, 255, 0.06);
   --ring: #6c63ff;
-  --yellow: #ffd93d;
+  --yellow: linear-gradient(135deg, #6c63ff, #ff6584);
   --green: #00d4aa;
   --blue-pale: rgba(108, 99, 255, 0.08);
   --ink-soft: rgba(255, 255, 255, 0.7);
@@ -41,7 +41,7 @@
   --light-blue: #8b83ff;
   --teal: #00d4aa;
   --navy: #1a1a2e;
-  --orange: #ff6b35;
+  --orange: #52bda0;
   --shadow: 0 18px 50px rgba(0, 0, 0, 0.3);
 }
 
