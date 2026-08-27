@@ -1,8 +1,7 @@
 from pathlib import Path
 from rdflib import Graph
 
-
-class recommandation_prompt_service:
+class RecommandationPromptService:
     def __init__(self):
         self.graph = Graph()
         self.prefix = "http://www.semanticweb.org/oracle/ontologies/2026/7/untitled-ontology-14/"
@@ -13,7 +12,6 @@ class recommandation_prompt_service:
         if file_path is None:
             base_dir = Path(__file__).resolve().parent.parent
             file_path = base_dir / "ontology" / "OrientIA.ttl"
-
             if not file_path.exists():
                 file_path = base_dir.parent / "OrientIA.ttl"
 
@@ -24,89 +22,85 @@ class recommandation_prompt_service:
         print(f"🟢 [RDFLIB] Ontologie chargée ! Total triplets : {len(self.graph)}", flush=True)
 
     def get_all_concepts(self) -> dict:
-        """Extrait uniquement les VRAIS individus autorisés (exclut les propriétés et métadonnées RDF)."""
+        """Extrait proprement les entités valides directement depuis le graphe SPARQL."""
         if len(self.graph) == 0:
             self.load_ontology()
 
-        # Liste de mots à exclure impérativement (propriétés / classes méta)
-        banned_words = [
-            "competences", "aPourCentreInteret", "centreInterets", "developpe",
-            "etreRequisePour", "possede", "parcours", "NamedIndividual", "Class",
-            "Ontology", "descriptionParcours", "http", "owl", "rdf", "rdfs"
-        ]
+        # Requête ciblée sur les individus réels (instances des classes)
+        query = f"""
+        PREFIX : <{self.prefix}>
+        PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+        PREFIX owl: <http://www.w3.org/2002/07/owl#>
 
-        query = """
-        SELECT DISTINCT ?concept WHERE {
-            ?concept ?p ?o .
-        }
+        SELECT DISTINCT ?ind ?type WHERE {{
+            ?ind rdf:type ?type .
+            FILTER(?type != owl:NamedIndividual)
+            FILTER(STRSTARTS(STR(?ind), "{self.prefix}"))
+        }}
         """
         results = self.graph.query(query)
-        concepts_set = set()
+        
+        competences = set()
+        interets = set()
 
         for row in results:
-            name = str(row.concept).split("/")[-1].split("#")[-1]
-            if name not in banned_words and not name.startswith("http"):
-                concepts_set.add(name)
+            name = str(row.ind).split("#")[-1].split("/")[-1]
+            type_name = str(row.type).split("#")[-1].split("/")[-1]
 
-        # Tri basique
-        competences = [c for c in concepts_set if c.startswith("CP_") or "competence" in c.lower()]
-        interets = [c for c in concepts_set if c not in competences]
+            # Séparation basée sur la classe RDF (Adaptez 'Competence' et 'CentreInteret' selon votre TTL)
+            if "competence" in type_name.lower():
+                competences.add(name)
+            elif "parcours" not in type_name.lower():
+                interets.add(name)
 
-        # Si pas de préfixe explicite CP_, on fournit la liste complète
-        if not competences:
-            competences = list(concepts_set)
-        if not interets:
-            interets = list(concepts_set)
-
+        # Fallback au cas où aucune classe spécifique n'est identifiée
+        all_concepts = list(competences | interets)
         return {
-            "centres_interet": list(set(interets)),
-            "competences": list(set(competences))
+            "centres_interet": list(interets) if interets else all_concepts,
+            "competences": list(competences) if competences else all_concepts
         }
 
     def get_recommandation_dynamique(
         self, competences: list[str] = None, centres_interet: list[str] = None
     ) -> list[dict]:
-        """Retourne UNIQUEMENT les entités de type :parcours qui correspondent aux critères."""
+        """Retourne les parcours triés par nombre de correspondances (score)."""
         if len(self.graph) == 0:
             self.load_ontology()
 
-        competences = competences or []
-        centres_interet = centres_interet or []
-
-        # Exclut tout mot parasite s'il s'est glissé dans les listes
-        banned = {"competences", "aPourCentreInteret", "centreInterets", "developpe", "possede"}
-        clean_cp = [c for c in competences if c not in banned]
-        clean_ci = [c for c in centres_interet if c not in banned]
+        clean_cp = competences or []
+        clean_ci = centres_interet or []
 
         if not clean_cp and not clean_ci:
             return []
 
-        matches = " ".join([f":{item}" for item in set(clean_cp + clean_ci)])
+        matches_uris = " ".join([f"<{self.prefix}{item}>" for item in set(clean_cp + clean_ci)])
 
         query = f"""
         PREFIX : <{self.prefix}>
         PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 
-        SELECT DISTINCT ?parcours ?descriptionParcours WHERE {{
+        SELECT ?parcours (SAMPLE(?desc) AS ?description) (COUNT(DISTINCT ?match) AS ?score) WHERE {{
             ?parcours rdf:type :parcours .
             ?parcours ?p ?match .
-            VALUES ?match {{ {matches} }}
-            OPTIONAL {{ ?parcours :descriptionParcours ?descriptionParcours . }}
+            VALUES ?match {{ {matches_uris} }}
+            OPTIONAL {{ ?parcours :descriptionParcours ?desc . }}
         }}
+        GROUP BY ?parcours
+        ORDER BY DESC(?score)
         """
 
         results = self.graph.query(query)
         recommandations = []
 
         for row in results:
-            parcours_name = str(row.parcours).split("/")[-1].split("#")[-1]
-            if parcours_name not in banned:
-                recommandations.append({
-                    "parcours": parcours_name,
-                    "descriptionParcours": str(row.descriptionParcours) if row.descriptionParcours else None,
-                })
+            parcours_name = str(row.parcours).split("#")[-1].split("/")[-1]
+            recommandations.append({
+                "parcours": parcours_name,
+                "descriptionParcours": str(row.description) if row.description else None,
+                "score": int(row.score)
+            })
 
         return recommandations
 
 
-recommandation_prompt_service = recommandation_prompt_service()
+recommandation_prompt_service = RecommandationPromptService()

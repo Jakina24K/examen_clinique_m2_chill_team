@@ -6,31 +6,30 @@ from app.services.recommandation_prompt_service import recommandation_prompt_ser
 
 
 class ProfileExtractorSchema(BaseModel):
-    competences: list[str] = Field(default=[], description="Liste des compétences ou matières (ex: Mathematiques, Programmation)")
-    centres_interet: list[str] = Field(default=[], description="Liste des centres d'intérêt (ex: Informatique, IntelligenceArtificielle)")
+    competences: list[str] = Field(default=[], description="Liste des compétences/matières extraites et présentes dans l'ontologie")
+    centres_interet: list[str] = Field(default=[], description="Liste des centres d'intérêt extraits et présents dans l'ontologie")
 
 
 def extract_profile_from_prompt(user_prompt: str) -> ProfileExtractorSchema:
     valid_concepts = recommandation_prompt_service.get_all_concepts()
 
-    ci_list = valid_concepts['centres_interet']
-    cp_list = valid_concepts['competences']
+    # Injection de la totalité des concepts disponibles (sans le découpage [:60])
+    ci_str = ", ".join(valid_concepts['centres_interet'])
+    cp_str = ", ".join(valid_concepts['competences'])
 
     system_prompt = f"""
-    Tu es un assistant d'orientation académique.
-    Analyse le texte utilisateur et extrais les DOMAINES, MATIÈRES, COMPÉTENCES et CENTRES D'INTÉRÊT mentionnés.
+    Tu es un extracteur d'entités strict pour une ontologie d'orientation académique.
+    Ton rôle est de faire correspondre les intentions de l'utilisateur avec UNIQUEMENT les identifiants valides fournis ci-dessous.
 
-    Valeurs autorisées :
-    - Centres d'intérêt / Domaines : {', '.join(ci_list[:60])}
-    - Compétences / Matières : {', '.join(cp_list[:60])}
+    --- VOCABULAIRE AUTORISÉ ---
+    Centres d'intérêt valides : {ci_str}
+    Compétences valides : {cp_str}
+    ----------------------------
 
-    Exemples d'extraction attendue :
-    - "je suis passionné d'informatique, et de math" -> centres_interet: ["Informatique"], competences: ["Mathematiques"]
-    - "j'aime le dev web et l'IA" -> centres_interet: ["IntelligenceArtificielle", "DeveloppementWeb"]
-
-    CONSIGNE STRICTE :
-    - Ne renvoie JAMAIS de mots de métadonnées comme "competences", "aPourCentreInteret", "centreInterets" ou "developpe".
-    - Ne renvoie que les VRAIS NOMS de domaines ou compétences présents dans la liste.
+    RÈGLES DE VALIDATION :
+    1. Ne génère JAMAIS un mot qui n'est pas explicitement présent dans les listes ci-dessus.
+    2. Si l'utilisateur mentionne un synonyme, associe-le au concept valide le plus proche dans la liste.
+    3. Si aucun terme ne correspond, laisse la liste vide [].
     """
 
     api_key = os.environ.get("GEMINI_API_KEY")
@@ -46,9 +45,8 @@ def extract_profile_from_prompt(user_prompt: str) -> ProfileExtractorSchema:
             system_instruction=system_prompt,
             response_mime_type="application/json",
             response_schema=ProfileExtractorSchema,
-            temperature=0.0,
+            temperature=0.0,  # Garantit la réactivité stricte aux consignes
         ),
     )
 
-    raw_text = response.text.encode("utf-8").decode("utf-8")
-    return ProfileExtractorSchema.model_validate_json(raw_text)
+    return ProfileExtractorSchema.model_validate_json(response.text)
