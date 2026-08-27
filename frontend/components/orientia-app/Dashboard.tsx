@@ -12,17 +12,7 @@ import { formations } from "./data/formations";
 
 export function Dashboard({ setView }: { setView: (v: string) => void }) {
   return (
-    <div
-      className="dashboard-content"
-      style={
-        {
-          "--primary": "#d97706",
-          "--primary-dark": "#9a3412",
-          "--secondary": "#0f766e",
-          "--yellow": "#facc15",
-        } as React.CSSProperties
-      }
-    >
+    <div className="dashboard-content">
       <div className="topline">
         <div>
           <span className="breadcrumb">Mon espace / Tableau de bord</span>

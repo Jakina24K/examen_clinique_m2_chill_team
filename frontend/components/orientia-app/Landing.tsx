@@ -6,8 +6,6 @@ import {
   ArrowRight,
   Check,
   ChevronRight,
-  MessageCircle,
-  ExternalLink,
   ShieldCheck,
   Sparkles,
 } from "lucide-react";
@@ -226,21 +224,38 @@ export function Landing({ onStart }: { onStart: () => void }) {
           </a>
         </section>
       </main>
-      <footer className="public-footer">
-        <span>© 2026 ORIENT'IA · ISPM</span>
-        <span>Fahaizana · Fampandrosoana · Fihavanana</span>
-        <span>
-          <a
-            href="https://www.facebook.com/ISPM2014/?locale=fr_FR"
-            target="_blank"
-          >
-            <MessageCircle size={15} />
-          </a>
-          <a href="https://ispm-edu.com/" target="_blank">
-            <ExternalLink size={15} />
-          </a>
-        </span>
-      </footer>
+      <a
+        href="https://ispm-edu.com/"
+        target="_blank"
+        rel="noreferrer"
+        aria-label="Visiter le site de l'ISPM"
+        style={{
+          position: "fixed",
+          right: 24,
+          bottom: 24,
+          zIndex: 20,
+          display: "grid",
+          placeItems: "center",
+          width: 58,
+          height: 58,
+          borderRadius: "50%",
+          background: "#fff",
+          boxShadow: "0 8px 24px rgba(0,0,0,.25)",
+        }}
+      >
+        <img
+          src="/logoispm.jfif"
+          alt="Logo ISPM"
+          width="44"
+          height="44"
+          style={{
+            width: 44,
+            height: 44,
+            borderRadius: "50%",
+            objectFit: "cover",
+          }}
+        />
+      </a>
     </div>
   );
 }

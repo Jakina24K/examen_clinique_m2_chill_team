@@ -1,6 +1,11 @@
-import { ArrowLeft, ArrowRight, BookOpen, CheckCircle2 } from "lucide-react";
+import { ArrowLeft, BookOpen, CheckCircle2 } from "lucide-react";
 import { Badge } from "./Badge";
 import { formations } from "./data/formations";
+type ParcoursDetail = {
+  description: string;
+  matieres: string;
+  specificites: string;
+};
 
 export function Parcours({
   mention,
@@ -45,33 +50,45 @@ export function Parcours({
       </div>
 
       <div className="formation-grid explorer-grid">
-        {formation.parcours.map((parcours, index) => (
-          <article
-            className={`panel formation-card formation-${formation.color}`}
-            key={parcours}
-            style={{ cursor: "default", textAlign: "left" }}
-          >
-            <div className="formation-meta">
-              <Badge label={formation.tag} tone={formation.color} />
-              <span className="path-count">
-                Parcours {String(index + 1).padStart(2, "0")}
-              </span>
-            </div>
-            <div className="section-icon" style={{ margin: "18px 0 14px" }}>
-              <BookOpen size={18} />
-            </div>
-            <h3>{parcours}</h3>
-            <p>{formation.title}</p>
-            <small className="formation-desc">
-              {parcours.includes("fusionné")
-                ? "Parcours historique fusionné"
-                : "Parcours actif de la mention"}
-            </small>
-            <span className="card-link">
-              Explorer ce parcours <ArrowRight size={15} />
-            </span>
-          </article>
-        ))}
+        {formation.parcours.map((parcours, index) => {
+          const detail = (
+            formation.parcoursDetails as unknown as Record<
+              string,
+              ParcoursDetail
+            >
+          )[parcours];
+
+          return (
+            <article
+              className={`panel formation-card formation-${formation.color}`}
+              key={parcours}
+              style={{ cursor: "default", textAlign: "left" }}
+            >
+              <div className="formation-meta">
+                <Badge label={formation.tag} tone={formation.color} />
+                <span className="path-count">
+                  Parcours {String(index + 1).padStart(2, "0")}
+                </span>
+              </div>
+              <div className="section-icon" style={{ margin: "18px 0 14px" }}>
+                <BookOpen size={18} />
+              </div>
+              <h3>{parcours}</h3>
+              <p>{formation.title}</p>
+              <small className="formation-desc">{detail.description}</small>
+              <div
+                style={{ display: "grid", gap: 8, marginTop: 14, fontSize: 11 }}
+              >
+                <span>
+                  <strong>Matières :</strong> {detail.matieres}
+                </span>
+                <span>
+                  <strong>Spécificités :</strong> {detail.specificites}
+                </span>
+              </div>
+            </article>
+          );
+        })}
       </div>
 
       <div className="trace-note">

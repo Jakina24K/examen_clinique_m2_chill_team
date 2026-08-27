@@ -499,19 +499,20 @@ function IsmpFloatingLogo() {
         borderRadius: "50%",
         background: "#fff",
         boxShadow: "0 8px 24px rgba(0,0,0,.25)",
-        border: "3px solid #facc15",
       }}
     >
-      <span
+      <img
+        src="/logoispm.jfif"
+        alt="Logo ISPM"
+        width="44"
+        height="44"
         style={{
-          color: "#0f3d72",
-          fontSize: 11,
-          fontWeight: 800,
-          letterSpacing: ".04em",
+          width: 44,
+          height: 44,
+          borderRadius: "50%",
+          objectFit: "cover",
         }}
-      >
-        ISPM
-      </span>
+      />
     </a>
   );
 }
