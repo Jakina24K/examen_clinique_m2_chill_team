@@ -1,0 +1,99 @@
+# ==========================================
+# 1. Environnements virtuels & Dépendances
+# ==========================================
+venv/
+.venv/
+env/
+ENV/
+env.bak/
+venv.bak/
+
+# ==========================================
+# 2. Configuration locale & Secrets
+# ==========================================
+# Ne jamais pousser les clés API ni les identifiants de BDD
+.env
+*.env
+!.env.example
+
+# ==========================================
+# 3. Cache Python & Fichiers temporaires
+# ==========================================
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Fichier parasite/inconnu repéré à la racine
+rRE
+
+# ==========================================
+# 4. Bases de données locales & Vector Store (AI/RAG)
+# ==========================================
+# Persistance de la base vectorielle ChromaDB
+chroma_db/
+
+# Bases SQLite ou dumps SQL locaux
+*.sqlite3
+*.db
+*.sql
+
+# Données de test / RAG locales (conserver les dossiers avec .gitkeep)
+data/knowledge/*
+!data/knowledge/.gitkeep
+data/tickets/*
+!data/tickets/.gitkeep
+data/**/*.pdf
+
+# ==========================================
+# 5. Tests & Couverture de code
+# ==========================================
+.pytest_cache/
+.coverage
+.coverage.*
+htmlcov/
+.nox/
+.hypothesis/
+
+# ==========================================
+# 6. Éditeurs & Outils système
+# ==========================================
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# v0 sandbox internal files
+__v0_runtime_loader.js
+__v0_devtools.tsx
+__v0_jsx-dev-runtime.ts
+.snowflake/
+.v0-trash/
+.vercel/
+
+# Environment variables
+.env*.local
+
+# Common ignores
+node_modules
+.next/
+.DS_Store
