@@ -1,43 +1,135 @@
+"""
+app/rag/ingest.py
+------------------
+Pipeline d'ingestion RAG pour ORIENT'IA.
+
+Rôle :
+    - Charger les documents pédagogiques (PDF + Markdown + TXT) depuis data/knowledge/
+    - Les découper en chunks avec chevauchement (contexte préservé)
+    - Générer des embeddings 100% locaux (HuggingFace all-MiniLM-L6-v2 -> rapide,
+      pas d'appel API, pas de coût, fonctionne hors-ligne pendant le hackathon)
+    - Persister dans ChromaDB avec métadonnées traçables (registre de sources)
+
+Dépendances :
+    pip install langchain langchain-community langchain-huggingface langchain-chroma \
+                sentence-transformers pypdf unstructured chromadb
+
+Exécution : python -m app.rag.ingest
+"""
+
 import os
-import chromadb
-from chromadb.utils import embedding_functions
-from dotenv import load_dotenv
+import hashlib
+import logging
+from pathlib import Path
+from typing import List
 
-load_dotenv()
+from langchain_community.document_loaders import (
+    PyPDFLoader,
+    UnstructuredMarkdownLoader,
+    TextLoader,
+)
+from langchain_text_splitters import RecursiveCharacterTextSplitter
+from langchain_huggingface import HuggingFaceEmbeddings
+from langchain_chroma import Chroma
+from langchain_core.documents import Document
 
+logging.basicConfig(level=logging.INFO, format="%(asctime)s [INGEST] %(message)s")
+logger = logging.getLogger(__name__)
+
+KNOWLEDGE_DIR = Path(os.getenv("KNOWLEDGE_DIR", "data/knowledge"))
 PERSIST_DIR = os.getenv("CHROMA_PERSIST_DIR", "./chroma_db")
+COLLECTION_NAME = "orientia_knowledge"
+EMBEDDING_MODEL = "sentence-transformers/all-MiniLM-L6-v2"
+
+# Chunking : 800 caractères ~= 150-200 tokens, suffisant pour une fiche formation
+# sans être trop large pour du reranking. 120 chars d'overlap pour ne pas couper
+# une phrase de prérequis pile au milieu.
+CHUNK_SIZE = 800
+CHUNK_OVERLAP = 120
+
+LOADER_MAP = {
+    ".pdf": PyPDFLoader,
+    ".md": UnstructuredMarkdownLoader,
+    ".txt": TextLoader,
+}
 
 
-def init_and_populate_db():
-    """Initialise ChromaDB avec des procédures techniques fictives pour le RAG."""
-    client = chromadb.PersistentClient(path=PERSIST_DIR)
-    
-    # Utilisation du modèle d'embedding par défaut de ChromaDB / Sentence Transformers
-    collection = client.get_or_create_collection(name="knowledge_base")
+def _doc_id(source_path: str, chunk_index: int) -> str:
+    """ID stable et déterministe -> nécessaire pour le registre de sources / traçabilité."""
+    raw = f"{source_path}-{chunk_index}"
+    return hashlib.md5(raw.encode()).hexdigest()[:12]
 
-    documents = [
-        "Procédure VPN: En cas de problème de connexion VPN, vérifier l'état du réseau local, redémarrer le client VPN, puis contacter le Support N1 si le problème persiste.",
-        "Politique de Sécurité: Toute modification de droits d'accès ou réinitialisation de mot de passe requiert obligatoirement une validation humaine du responsable IAM.",
-        "Panne ERP: Un incident majeur est en cours sur l'ERP. L'équipe Infrastructure intervient. Temps de rétablissement estimé : 2 heures.",
-        "Demande incomplète: Si un utilisateur signale un problème sans préciser le message d'erreur ou l'équipement concerné, demander systématiquement une capture d'écran et le nom du poste."
-    ]
 
-    metadatas = [
-        {"doc_id": "KB-NET-01", "titre": "Guide Dépannage VPN"},
-        {"doc_id": "KB-SEC-01", "titre": "Politique de Sécurité & Droits d'Accès"},
-        {"doc_id": "KB-INFRA-02", "titre": "Status Incident ERP"},
-        {"doc_id": "KB-PROC-01", "titre": "Guide de Qualification de Ticket"}
-    ]
+def load_documents(knowledge_dir: Path = KNOWLEDGE_DIR) -> List[Document]:
+    """Charge récursivement tous les fichiers supportés depuis data/knowledge/."""
+    docs: List[Document] = []
+    if not knowledge_dir.exists():
+        logger.warning(f"Répertoire introuvable : {knowledge_dir}")
+        return docs
 
-    ids = ["doc_1", "doc_2", "doc_3", "doc_4"]
+    for path in knowledge_dir.rglob("*"):
+        if not path.is_file() or path.suffix.lower() not in LOADER_MAP:
+            continue
+        loader_cls = LOADER_MAP[path.suffix.lower()]
+        try:
+            loaded = loader_cls(str(path)).load()
+            for d in loaded:
+                # Registre de sources : chaque chunk garde une trace vérifiable du fichier d'origine
+                d.metadata["source_file"] = path.name
+                d.metadata["source_path"] = str(path)
+            docs.extend(loaded)
+            logger.info(f"Chargé : {path.name} ({len(loaded)} page(s)/section(s))")
+        except Exception as e:
+            logger.error(f"Échec du chargement de {path.name} : {e}")
+    return docs
 
-    collection.add(
-        documents=documents,
-        metadatas=metadatas,
-        ids=ids
+
+def split_documents(docs: List[Document]) -> List[Document]:
+    splitter = RecursiveCharacterTextSplitter(
+        chunk_size=CHUNK_SIZE,
+        chunk_overlap=CHUNK_OVERLAP,
+        separators=["\n\n", "\n", ". ", " ", ""],
     )
-    print("Base de connaissances ChromaDB initialisée avec succès !")
+    chunks = splitter.split_documents(docs)
+
+    # Métadonnées d'observabilité (exigées par le protocole d'évaluation ORIENT'IA)
+    for i, chunk in enumerate(chunks):
+        chunk.metadata["chunk_id"] = _doc_id(chunk.metadata.get("source_path", "unknown"), i)
+        chunk.metadata["chunk_index"] = i
+        chunk.metadata["n_chars"] = len(chunk.page_content)
+        chunk.metadata.setdefault("titre", chunk.metadata.get("source_file", "Document"))
+
+    logger.info(f"{len(chunks)} chunks générés (taille={CHUNK_SIZE}, overlap={CHUNK_OVERLAP})")
+    return chunks
+
+
+def build_vectorstore(chunks: List[Document]) -> Chroma:
+    embeddings = HuggingFaceEmbeddings(
+        model_name=EMBEDDING_MODEL,
+        model_kwargs={"device": "cpu"},                 # local, pas de clé API
+        encode_kwargs={"normalize_embeddings": True},   # -> similarité cosinus propre
+    )
+
+    vectorstore = Chroma.from_documents(
+        documents=chunks,
+        embedding=embeddings,
+        collection_name=COLLECTION_NAME,
+        persist_directory=PERSIST_DIR,
+        collection_metadata={"hnsw:space": "cosine"},
+    )
+    logger.info(f"Base vectorielle persistée -> {PERSIST_DIR} ({COLLECTION_NAME})")
+    return vectorstore
+
+
+def run_ingestion() -> None:
+    docs = load_documents()
+    if not docs:
+        logger.warning("Aucun document trouvé. Vérifiez data/knowledge/.")
+        return
+    chunks = split_documents(docs)
+    build_vectorstore(chunks)
+    logger.info("Ingestion terminée avec succès.")
 
 
 if __name__ == "__main__":
-    init_and_populate_db()
+    run_ingestion()
