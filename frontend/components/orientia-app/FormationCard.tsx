@@ -31,11 +31,12 @@ export function FormationCard({
       </div>
       <h3>{formation.name}</h3>
       <p>{formation.title}</p>
-      <small className="formation-desc">{formation.parcours.join(", ")}</small>
       <small className="formation-desc">{formation.desc}</small>
-      <span className="card-link">
-        Voir les parcours <ArrowUpRight />
-      </span>
+      <div className="flex justify-end mt-2">
+        <span className="card-link flex items-center gap-1">
+          Voir les parcours <ArrowUpRight />
+        </span>
+      </div>
     </button>
   );
 }
