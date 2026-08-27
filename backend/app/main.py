@@ -4,6 +4,9 @@ from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy import text
 from sqlalchemy.orm import Session
 
+from app.api.routes import auth, ontology
+from app.core.database import engine, get_db
+from app.services.recommandation_service import recommandation_service
 from app.api.routes import auth, chat   
 from app.core.database import engine, get_db
 from app.agent.agent import _get_agent_executor
@@ -17,6 +20,11 @@ async def lifespan(app: FastAPI):
             print("🟢 [DATABASE] Connexion à PostgreSQL réussie avec succès !")
     except Exception as e:
         print(f"🔴 [DATABASE] Échec de la connexion à PostgreSQL : {e}")
+    try:
+        recommandation_service.load_ontology("backend\\app\\ontology\\OrientIA.ttl")
+        print("🟢 [RDFLIB] Ontologie OrientIA.ttl chargée avec succès !")
+    except Exception as e:
+        print(f"🔴 [RDFLIB] Échec du chargement de l'ontologie : {e}")
 
     # Warm up RAG + agent BEFORE accepting traffic — avoids the race condition
     # in the lazy singletons and front-loads cold-start latency to boot time.
@@ -44,6 +52,7 @@ app.add_middleware(
 
 # Montage du routeur sous /api/auth pour correspondre à tokenUrl="/api/auth/login" dans security.py
 app.include_router(auth.routeur, prefix="/api/auth", tags=["Authentification"])
+app.include_router(ontology.routeur, prefix="/api/recommandation", tags=["ONTOLOGY"])
 app.include_router(chat.routeur, prefix="/api", tags=["Chat"])
 
 @app.get("/", tags=["Health"])
