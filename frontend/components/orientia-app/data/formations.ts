@@ -1,0 +1,58 @@
+export const formations = [
+  {
+    name: "INFORMATIQUE",
+    title: "Informatiques et Télécommunications",
+    tag: "Numérique · IA · Réseaux",
+    score: 92,
+    color: "blue",
+    paths: 4,
+    visual: "Code, réseaux et intelligence artificielle",
+    desc: "Code, données, systèmes et intelligence artificielle pour les métiers du numérique.",
+  },
+  {
+    name: "GÉNIE",
+    title: "Génie Industriel et Civil",
+    tag: "Industrie · Construction",
+    score: 85,
+    color: "orange",
+    paths: 3,
+    visual: "Plans, chantier et infrastructures",
+    desc: "Énergie, matériaux, maintenance et infrastructures durables pour bâtir demain.",
+  },
+  {
+    name: "BIO",
+    title: "Biotechnologie et Agronomie",
+    tag: "Sciences · Environnement",
+    score: 78,
+    color: "green",
+    paths: 4,
+    visual: "Laboratoire, cultures et environnement",
+    desc: "Laboratoires, agriculture et innovation pour nourrir et préserver Madagascar.",
+  },
+  {
+    name: "TOURISME",
+    title: "Techniques du Tourisme",
+    tag: "Hôtellerie · Voyage",
+    score: 74,
+    color: "teal",
+    paths: 1,
+    visual: "Paysages, accueil et hôtellerie",
+    desc: "Tourisme, environnement et hôtellerie au service d'une destination d'exception.",
+  },
+  {
+    name: "AFFAIRES",
+    title: "Techniques des Affaires",
+    tag: "Finance · Management",
+    score: 81,
+    color: "navy",
+    paths: 4,
+    visual: "Graphiques, droit et réunions",
+    desc: "Finance, droit, comptabilité et management pour piloter les organisations.",
+  },
+];
+
+export const suggestions = [
+  "Quelle formation correspond à mon profil ?",
+  "Comparer ISAIA et IGGLIA",
+  "Quels sont les débouchés en IA ?",
+];
