@@ -4,6 +4,9 @@ from sqlalchemy import Column, String, Boolean, DateTime, Enum
 from app.core.database import Base
 import enum
 
+class RoleEnum(str, enum.Enum):
+    demandeur = "demandeur"
+    recepteur = "recepteur"
 
 class Utilisateur(Base):
     __tablename__ = "utilisateurs"
