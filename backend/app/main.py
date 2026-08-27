@@ -1,30 +1,35 @@
-import time
 from contextlib import asynccontextmanager
 from fastapi import Depends, FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy import text
 from sqlalchemy.orm import Session
 
-# from app.agent.agent import process_ticket
 from app.api.routes import auth, chat   
 from app.core.database import engine, get_db
-
+from app.agent.agent import _get_agent_executor
+from app.rag.retriever import _get_vectorstore
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    # Logique d'initialisation (remplace @app.on_event("startup"))
     try:
         with engine.connect() as connection:
             connection.execute(text("SELECT 1"))
             print("🟢 [DATABASE] Connexion à PostgreSQL réussie avec succès !")
     except Exception as e:
         print(f"🔴 [DATABASE] Échec de la connexion à PostgreSQL : {e}")
+
+    # Warm up RAG + agent BEFORE accepting traffic — avoids the race condition
+    # in the lazy singletons and front-loads cold-start latency to boot time.
+    print("⏳ Chargement du vectorstore et de l'agent...")
+    _get_vectorstore()
+    _get_agent_executor()
+    print("🟢 Agent ORIENT'IA prêt.")
+
     yield
 
-
 app = FastAPI(
-    title="ORIENT'IA - IT Support Agent",
-    description="Agent IA d'assistance IT avec persistance et journalisation",
+    title="ORIENT'IA - Assistant d'orientation pédagogique",
+    description="Agent IA d'orientation (RAG + ML + IA Symbolique) avec persistance et journalisation",
     version="1.0.0",
     lifespan=lifespan,
 )
@@ -43,7 +48,7 @@ app.include_router(chat.routeur, prefix="/api", tags=["Chat"])
 
 @app.get("/", tags=["Health"])
 def health_check():
-    return {"status": "ok", "service": "mAIntenance & Assistance AI Agent"}
+    return {"status": "ok", "service": "ORIENT'IA - Assistant d'orientation"}
 
 
 @app.get("/health/db", tags=["Health"])

@@ -46,15 +46,13 @@ pip install -r requirements.txt
 alembic revision --autogenerate -m "initial_migration"
 alembic upgrade head
 ```
-
-3. **Test classifier :**
-```bash
-python -m tests.test_checkpoint
-```
-
-4. **Demarrarer le serveur :**
+3. **Demarrarer le serveur :**
 ```bash
 uvicorn app.main:app --reload --host 0.0.0.0 --port 8000    
+``` 
+4. **Ingestion :**
+```bash
+python -m app.rag.ingest
 ``` 
 5. **Test :**
 ```bash

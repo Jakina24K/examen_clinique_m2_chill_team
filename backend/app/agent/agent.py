@@ -26,7 +26,7 @@ from langchain_core.messages import HumanMessage, AIMessage
 from langchain_classic.agents import create_tool_calling_agent, AgentExecutor
 from langchain_google_genai import ChatGoogleGenerativeAI
 
-from app.tools.tools import AVAILABLE_TOOLS
+from app.tools import AVAILABLE_TOOLS
 from app.security.guardrails import evaluate_security
 from app.core.config import settings
 
@@ -115,6 +115,14 @@ def _extract_tool_trace(intermediate_steps) -> List[Dict[str, Any]]:
         })
     return trace
 
+# Cheap safety valve — evict oldest sessions once you exceed a cap
+MAX_SESSIONS = 500
+
+def _evict_if_needed():
+    if len(_CONVERSATION_STORE) > MAX_SESSIONS:
+        oldest_key = next(iter(_CONVERSATION_STORE))
+        del _CONVERSATION_STORE[oldest_key]
+
 
 def process_message(session_id: str, message: str) -> Dict[str, Any]:
     """
@@ -144,6 +152,9 @@ def process_message(session_id: str, message: str) -> Dict[str, Any]:
             "temps_execution_s": round(time.time() - start, 2),
         }
 
+    # appelle _evict_if_needed() dans process_message juste avant d'initialiser history
+    _evict_if_needed()
+    
     # --- 2. Historique de conversation ---
     history = _CONVERSATION_STORE.setdefault(session_id, [])
 

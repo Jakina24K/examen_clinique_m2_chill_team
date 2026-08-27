@@ -44,7 +44,6 @@ class SourceRAG:
 
 
 def _get_vectorstore() -> Chroma:
-    """Singleton paresseux : évite de recharger le modèle d'embedding à chaque appel."""
     global _embeddings, _vectorstore
     if _vectorstore is None:
         _embeddings = HuggingFaceEmbeddings(
@@ -58,6 +57,13 @@ def _get_vectorstore() -> Chroma:
             persist_directory=PERSIST_DIR,
             collection_metadata={"hnsw:space": "cosine"},
         )
+        # Déplacé ICI (à l'intérieur du if) :
+        count = _vectorstore._collection.count()
+        if count == 0:
+            logger.warning(f"⚠️  Collection '{COLLECTION_NAME}' est VIDE — avez-vous lancé `python -m app.rag.ingest` ?")
+        else:
+            logger.info(f"Collection '{COLLECTION_NAME}' chargée : {count} chunks disponibles.")
+    
     return _vectorstore
 
 

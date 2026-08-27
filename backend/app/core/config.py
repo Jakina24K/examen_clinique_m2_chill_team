@@ -11,7 +11,7 @@ class Settings(BaseSettings):
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 480
     
     # Application & AI
-    APP_NAME: str = "ORIENT'IA - IT Support Agent"
+    APP_NAME: str = "ORIENT'IA - Assistant d'orientation pédagogique"
     DEBUG: bool = True
     GEMINI_API_KEY: Optional[str] = None
     HF_TOKEN: Optional[str] = None

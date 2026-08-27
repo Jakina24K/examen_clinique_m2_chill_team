@@ -7,7 +7,6 @@ routeur = APIRouter()
 
 class ChatRequest(BaseModel):
     session_id: str
-    message: str
     # On limite entre 1 et 2000 caractères
     message: str = Field(..., min_length=1, max_length=2000)
 
