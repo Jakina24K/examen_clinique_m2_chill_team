@@ -11,9 +11,10 @@ class Settings(BaseSettings):
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 480
     
     # Application & AI
-    APP_NAME: str = "My FastAPI App"
+    APP_NAME: str = "ORIENT'IA - Assistant d'orientation pédagogique"
     DEBUG: bool = True
     GEMINI_API_KEY: Optional[str] = None
+    HF_TOKEN: Optional[str] = None
     CHROMA_PERSIST_DIR: str = "./chroma_db"
 
     # Configuration Pydantic Settings
@@ -22,5 +23,5 @@ class Settings(BaseSettings):
         env_file_encoding="utf-8",
         extra="ignore"  # Empêche les erreurs si des variables supplémentaires sont dans le .env
     )
-
+    
 settings = Settings()
