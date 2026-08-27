@@ -31,6 +31,7 @@ export function FormationCard({
       </div>
       <h3>{formation.name}</h3>
       <p>{formation.title}</p>
+      <small className="formation-desc">{formation.parcours.join(", ")}</small>
       <small className="formation-desc">{formation.desc}</small>
       <span className="card-link">
         Voir les parcours <ArrowUpRight />

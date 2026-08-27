@@ -42,11 +42,11 @@ export function Explorer({ setView }: { setView: (v: string) => void }) {
           </span>
         </div>
         <div className="catalog-stat">
-          <strong>16</strong>
+          <strong>13</strong>
           <span>
             parcours
             <br />
-            proposés
+            distincts
           </span>
         </div>
       </div>
@@ -69,10 +69,36 @@ export function Explorer({ setView }: { setView: (v: string) => void }) {
           <FormationCard
             key={f.name}
             formation={f}
-            onClick={() => setView("assistant")}
+            onClick={() => {
+              setView(`parcours:${f.name}`);
+            }}
           />
         ))}
       </div>
+      <section className="panel" style={{ marginTop: 22, padding: 22 }}>
+        <div className="panel-head">
+          <div>
+            <span className="section-kicker">RÉCAPITULATIF</span>
+            <h3>Mentions et parcours concernés</h3>
+          </div>
+          <strong>13 parcours</strong>
+        </div>
+        <div style={{ display: "grid", gap: 10 }}>
+          {formations.map((formation) => (
+            <div
+              key={formation.name}
+              style={{
+                display: "grid",
+                gridTemplateColumns: "minmax(180px, 1fr) 2fr",
+                gap: 16,
+              }}
+            >
+              <strong>{formation.title}</strong>
+              <span>{formation.parcours.join(", ")}</span>
+            </div>
+          ))}
+        </div>
+      </section>
     </div>
   );
 }

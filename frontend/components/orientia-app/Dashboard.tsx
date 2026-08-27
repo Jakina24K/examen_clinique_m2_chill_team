@@ -12,7 +12,17 @@ import { formations } from "./data/formations";
 
 export function Dashboard({ setView }: { setView: (v: string) => void }) {
   return (
-    <div className="dashboard-content">
+    <div
+      className="dashboard-content"
+      style={
+        {
+          "--primary": "#d97706",
+          "--primary-dark": "#9a3412",
+          "--secondary": "#0f766e",
+          "--yellow": "#facc15",
+        } as React.CSSProperties
+      }
+    >
       <div className="topline">
         <div>
           <span className="breadcrumb">Mon espace / Tableau de bord</span>
@@ -116,6 +126,22 @@ export function Dashboard({ setView }: { setView: (v: string) => void }) {
             onClick={() => setView("explorer")}
           />
         ))}
+      </div>
+      <div className="panel" style={{ marginTop: 22, padding: 22 }}>
+        <div className="panel-head">
+          <div>
+            <span className="section-kicker">REPÈRES ISPM</span>
+            <h3>13 parcours dans 5 mentions</h3>
+          </div>
+          <button className="edit-link" onClick={() => setView("explorer")}>
+            Voir le détail <ArrowRight size={14} />
+          </button>
+        </div>
+        <p style={{ margin: 0 }}>
+          Informatique et Télécommunications (4), Génie Industriel et Civil (3),
+          Biotechnologie et Agronomie (1 actif + 3 fusionnés), Techniques du
+          Tourisme (1), Techniques des Affaires (4).
+        </p>
       </div>
       <div className="trace-note">
         <ShieldCheck size={18} />
