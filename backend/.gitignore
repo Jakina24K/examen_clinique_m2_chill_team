@@ -60,6 +60,7 @@ data/knowledge/*
 !data/knowledge/.gitkeep
 data/tickets/*
 !data/tickets/.gitkeep
+data/**/*.pdf
 
 # ==========================================
 # 5. Tests & Couverture de code
