@@ -4,6 +4,7 @@ from pydantic import BaseModel, Field
 from app.agent.agent import process_message
 from app.api.routes.ontology import get_recommandation_from_prompt
 from ml.src.predict import predict_orientation
+from app.services.log_writer import log_response
 routeur = APIRouter()
 
 class ChatRequest(BaseModel):
@@ -17,8 +18,12 @@ def chat(req: ChatRequest):
     resultat_ontology = get_recommandation_from_prompt(req.message)
     resultat_ml = predict_orientation(req.message)
 
-    return {
+    agregation = {
         "rag": resultat_rag,
         "ontology": resultat_ontology,
         "ml": resultat_ml
     }
+
+    log_response(agregation)
+
+    return agregation
