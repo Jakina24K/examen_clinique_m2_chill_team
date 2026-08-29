@@ -1,180 +1,142 @@
-import time
+"""
+app/main.py
+-------------
+Point d'entrée FastAPI ORIENT'IA.
+
+Paradigme "Single LLM Orchestrator" : le seul appel LLM autorisé dans tout
+le backend est celui de l'agent LangChain (app/agent/agent.py). RAG, ML et
+IA symbolique sont déterministes et appelés UNIQUEMENT comme outils de
+l'agent — jamais directement depuis une route HTTP par un utilisateur final.
+
+/api/orientation/predict et /api/recommandation/dynamique restent exposés,
+sans LLM, pour permettre à l'équipe ML/Symbolique de tester leurs pipelines
+en isolation. Le chemin utilisateur normal est exclusivement POST /api/chat.
+"""
+
+# app/main.py — top of file, before anything else
+import logging
+from logging.handlers import RotatingFileHandler
+from pathlib import Path
+
+LOG_DIR = Path(__file__).resolve().parent.parent / "logs"
+LOG_DIR.mkdir(parents=True, exist_ok=True)
+
+def setup_logging() -> None:
+    fmt = logging.Formatter("%(asctime)s [%(levelname)s] %(name)s: %(message)s")
+    stream_handler = logging.StreamHandler()
+    stream_handler.setFormatter(fmt)
+    file_handler = RotatingFileHandler(
+        LOG_DIR / "orientia.log", maxBytes=5_000_000, backupCount=5, encoding="utf-8"
+    )
+    file_handler.setFormatter(fmt)
+
+    root = logging.getLogger()
+    root.setLevel(logging.INFO)
+    root.handlers.clear()
+    root.addHandler(stream_handler)
+    root.addHandler(file_handler)
+    logging.captureWarnings(True)   # route warnings.warn(...) through logging too
+
+    for name in ("uvicorn", "uvicorn.error", "uvicorn.access"):
+        lg = logging.getLogger(name)
+        lg.handlers.clear()
+        lg.propagate = True
+
+setup_logging()
+logger = logging.getLogger("app.main")
+
 from contextlib import asynccontextmanager
+
 from fastapi import Depends, FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy import text
 from sqlalchemy.orm import Session
 
-from app.schemas.orientation import OrientationRequest, ExtractRequest
-from app.api.routes import auth, ontology
+from app.api.routes import auth, chat, ontology
 from app.core.database import engine, get_db
+from app.schemas.orientation import OrientationRequest
 from app.services.recommandation_service import recommandation_service
-from app.api.routes import auth, chat 
-from app.agent.agent import _get_agent_executor
+import asyncio
+from app.agent.agent import _get_agent_executor,cleanup_expired_sessions
 from app.rag.retriever import _get_vectorstore
+from ml.src.predict import predict_from_features, warmup as ml_warmup, is_ready as ml_is_ready
 
-from ml.src.preprocessing import preprocess_survey_data
-from ml.src.extract_prompt import extract_orientation_data
+import warnings
+from sklearn.exceptions import InconsistentVersionWarning
 
-import joblib
-import pandas as pd
+# Masque les avertissements d'incompatibilité de version de scikit-learn
+warnings.filterwarnings("ignore", category=InconsistentVersionWarning)
 
-# ============================================================
-# MODEL & MAPPING
-# ============================================================
+async def _session_cleanup_loop() -> None:
+    while True:
+        await asyncio.sleep(600)  # every 10 min
+        try:
+            cleanup_expired_sessions()
+        except Exception:
+            logger.error("Échec du nettoyage périodique des sessions", exc_info=True)
 
-MODEL_PATH = "ml/models/orientia_best_model_v2.pkl"
-SCALER_PATH = "ml/models/orientia_scaler_v2.pkl"
-SELECTOR_PATH = "ml/models/orientia_selector_v2.pkl"
-MAPPING_PATH = "ml/models/orientia_id_to_filiere.pkl"
-
-scaler = joblib.load(SCALER_PATH)
-selector = joblib.load(SELECTOR_PATH)
-
-model = joblib.load(MODEL_PATH)
-id_to_filiere = joblib.load(MAPPING_PATH)
-
-# ============================================================
-# LISTE DES COLONNES ATTENDUES PAR LE MODÈLE
-# ============================================================
-# Basée exactement sur le dataset d'entraînement
-# Total : 76 colonnes (age, statut, bac_serie + 72 niveaux + 5 compétences + 2 contexte)
-
-MODEL_FEATURES = [
-    "age",
-    "statut",
-    "bac_serie",
-    "niveau_agronomie",
-    "niveau_algorithme",
-    "niveau_algèbre",
-    "niveau_analyse",
-    "niveau_analyse_mathématique",
-    "niveau_anglais",
-    "niveau_assainissement",
-    "niveau_autocad",
-    "niveau_bactériologie",
-    "niveau_base_de_données",
-    "niveau_biochimie",
-    "niveau_biologie_animale",
-    "niveau_biologie_cellulaire",
-    "niveau_botanique",
-    "niveau_chimie",
-    "niveau_comptabilité",
-    "niveau_dessin",
-    "niveau_droit",
-    "niveau_ecologie",
-    "niveau_economie",
-    "niveau_econométrie",
-    "niveau_electricité",
-    "niveau_electronique",
-    "niveau_environnement",
-    "niveau_enzymologie",
-    "niveau_finance_publique",
-    "niveau_fiscalité",
-    "niveau_français",
-    "niveau_génétique",
-    "niveau_géologie",
-    "niveau_html_css",
-    "niveau_hydraulique",
-    "niveau_hygiène",
-    "niveau_industries_pharmaceutiques",
-    "niveau_informatique",
-    "niveau_informatique_scientifique",
-    "niveau_langage_c",
-    "niveau_logique",
-    "niveau_macroéconomie_microéconomie",
-    "niveau_maintenance",
-    "niveau_marketing",
-    "niveau_mathématique_discrète",
-    "niveau_mathématique_financière",
-    "niveau_mathématiques",
-    "niveau_musique",
-    "niveau_mécanique",
-    "niveau_nutrition_humaine",
-    "niveau_organisation_dentreprise",
-    "niveau_ouvrages_métalliques",
-    "niveau_pharmacologie",
-    "niveau_physiologie_animale",
-    "niveau_physiologie_végétale",
-    "niveau_physique",
-    "niveau_probabilité_statistique",
-    "niveau_pétrologie",
-    "niveau_science_des_aliments",
-    "niveau_sites_touristiques",
-    "niveau_statistiques_appliquée",
-    "niveau_structure_de_données",
-    "niveau_structure_des_ordinateurs",
-    "niveau_technique_bancaire",
-    "niveau_thermodynamique",
-    "niveau_thermophysique",
-    "niveau_virologie",
-    "niveau_zootechnie",
-    "travail_equipe",
-    "autonomie",
-    "analyse_synthese",
-    "creativite",
-    "gestion_projet",
-    "environnement",
-    "secteur",
-]
-
-print(f"✅ {len(MODEL_FEATURES)} colonnes définies (attendues par le modèle)")
-
-# Vérification du modèle
-if hasattr(model, "n_features_in_"):
-    print(f"✅ Le modèle attend {model.n_features_in_} features.")
-    if len(MODEL_FEATURES) != model.n_features_in_:
-        print(f"⚠️ ATTENTION : Mismatch ! MODEL_FEATURES a {len(MODEL_FEATURES)} colonnes, "
-              f"mais le modèle en attend {model.n_features_in_}")
-else:
-    print("⚠️ Le modèle n'a pas d'attribut n_features_in_.")
-
-
-# ============================================================
-# REQUEST SCHEMA
-# ============================================================
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
+    # --- 1. Base de données ---
     try:
         with engine.connect() as connection:
             connection.execute(text("SELECT 1"))
-            print("🟢 [DATABASE] Connexion à PostgreSQL réussie !")
+            logger.info("🟢 [DATABASE] Connexion à PostgreSQL réussie.")
     except Exception as e:
-        print(f"🔴 [DATABASE] Échec de la connexion : {e}")
+        logger.error(f"🔴 [DATABASE] Échec de la connexion : {e}")
+
+    # --- 2. Ontologie RDF — dégradation gracieuse si le .ttl est absent.
+    # Appel SANS argument : recommandation_service.load_ontology() résout
+    # déjà le chemin relativement à __file__, pas au cwd du process.
     try:
-        recommandation_service.load_ontology("backend\\app\\ontology\\OrientIA.ttl")
-        print("🟢 [RDFLIB] Ontologie OrientIA.ttl chargée avec succès !")
+        recommandation_service.load_ontology()
+        logger.info(f"🟢 [RDFLIB] Ontologie chargée ({len(recommandation_service.graph)} triplets).")
     except Exception as e:
-        print(f"🔴 [RDFLIB] Échec du chargement de l'ontologie : {e}")
+        logger.error(f"🔴 [RDFLIB] Échec du chargement — verifier_prerequis répondra en dégradé : {e}")
 
-    # Warm up RAG + agent BEFORE accepting traffic — avoids the race condition
-    # in the lazy singletons and front-loads cold-start latency to boot time.
-    print("⏳ Chargement du vectorstore et de l'agent...")
-    _get_vectorstore()
-    _get_agent_executor()
-    print("🟢 Agent ORIENT'IA prêt.")
+    # --- 3. RAG + ML + Agent, chargés une seule fois avant d'accepter du trafic ---
+    logger.info("⏳ Chargement du vectorstore, du pipeline ML et de l'agent...")
+    try:
+        _get_vectorstore()
+    except Exception as e:
+        logger.error(f"🔴 [RAG] Échec du chargement du vectorstore : {e}")
 
+    try:
+        ml_warmup()
+    except Exception as e:
+        logger.error(f"🔴 [ML] Échec du chargement du pipeline sklearn — analyser_profil_ml répondra en dégradé : {e}")
+
+    try:
+        _get_agent_executor()
+        logger.info("🟢 Agent ORIENT'IA prêt.")
+    except Exception as e:
+        logger.error(f"🔴 [AGENT] Échec de l'initialisation de l'agent : {e}")
+
+    cleanup_task = asyncio.create_task(_session_cleanup_loop())
     yield
+    cleanup_task.cancel()
+
 
 app = FastAPI(
     title="ORIENT'IA - Assistant d'orientation pédagogique",
-    description="Agent IA d'orientation (RAG + ML + IA Symbolique) avec persistance et journalisation",
+    description="Agent IA d'orientation (RAG + ML + IA Symbolique), orchestré par un unique agent LangChain.",
     version="1.0.0",
     lifespan=lifespan,
 )
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=["http://localhost:3000"],  # remplacer par l'origine réelle du frontend
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
 app.include_router(auth.routeur, prefix="/api/auth", tags=["Authentification"])
-app.include_router(ontology.routeur, prefix="/api/recommandation", tags=["ONTOLOGY"])
+app.include_router(ontology.routeur, prefix="/api/recommandation", tags=["Ontology (debug, sans LLM)"])
 app.include_router(chat.routeur, prefix="/api", tags=["Chat"])
+
 
 @app.get("/", tags=["Health"])
 def health_check():
@@ -187,76 +149,22 @@ def health_check_db(db: Session = Depends(get_db)):
         db.execute(text("SELECT 1"))
         return {"status": "ok", "database": "connected"}
     except Exception as e:
-        raise HTTPException(
-            status_code=500, detail=f"Database connection error: {str(e)}"
-        )
+        raise HTTPException(status_code=500, detail=f"Database connection error: {str(e)}")
 
 
-@app.post("/api/orientation/predict", tags=["Orientation IA"])
-def predict_orientation(request: ExtractRequest):
-    data: OrientationRequest = extract_orientation_data(request)
-    print("data : ", data)
+@app.get("/health/ml", tags=["Health"])
+def health_check_ml():
+    return {"status": "ok" if ml_is_ready() else "not_loaded"}
+
+
+@app.post("/api/orientation/predict", tags=["Orientation IA (debug, sans LLM)"])
+def predict_orientation_direct(request: OrientationRequest):
+    """
+    Test direct du pipeline sklearn, sans agent ni appel LLM — prend un
+    profil déjà structuré. Utile à l'équipe ML pour valider le modèle en
+    isolation. Le chemin utilisateur normal est POST /api/chat.
+    """
     try:
-        start_time = time.time()
-
-        data["competences"] = ";".join(data["competences"])
-        df = pd.DataFrame([data])
-
-        # 2. Prétraiter : générer les 76 colonnes spécialisées
-        X = preprocess_survey_data(df, MODEL_FEATURES)
-
-        # Vérifier le nombre de colonnes
-        if X.shape[1] != model.n_features_in_:
-            # Le modèle attend le nombre de features après sélection, mais on va appliquer le sélecteur
-            # On vérifie plutôt que le nombre de colonnes correspond à celui attendu par le scaler
-            if X.shape[1] != scaler.n_features_in_:
-                raise HTTPException(
-                    status_code=500,
-                    detail=f"Le preprocessing a produit {X.shape[1]} colonnes, "
-                           f"mais le scaler en attend {scaler.n_features_in_}."
-                )
-
-        # 3. Normalisation
-        X_scaled = scaler.transform(X)
-
-        # 4. Sélection des features
-        X_selected = selector.transform(X_scaled)
-
-        # 5. Prédiction
-        prediction = model.predict(X_selected)
-        orientation_id = int(prediction[0])
-        orientation = id_to_filiere.get(
-            orientation_id, f"Filière inconnue (ID {orientation_id})"
-        )
-
-        # 6. Probabilités
-        probabilities = []
-        if hasattr(model, "predict_proba"):
-            proba = model.predict_proba(X_selected)[0]
-            probabilities = [
-                {
-                    "classe": id_to_filiere.get(
-                        int(model.classes_[i]), str(model.classes_[i])
-                    ),
-                    "probabilite": round(float(proba[i]) * 100, 2),
-                }
-                for i in range(len(proba))
-            ]
-            probabilities.sort(key=lambda x: x["probabilite"], reverse=True)
-
-        execution_time = round(time.time() - start_time, 3)
-        print(f"🟢 Orientation prédite : {orientation} ({execution_time}s)")
-
-        return {
-            "success": True,
-            "orientation": orientation,
-            "probabilites": probabilities,
-            "execution_time": execution_time,
-        }
-
-    except HTTPException:
-        raise
+        return {"success": True, **predict_from_features(request.model_dump())}
     except Exception as e:
-        import traceback
-        traceback.print_exc()
         raise HTTPException(status_code=500, detail=f"{type(e).__name__}: {str(e)}")

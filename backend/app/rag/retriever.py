@@ -16,6 +16,12 @@ from typing import List, Optional
 from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_chroma import Chroma
 
+from app.core.config import settings
+
+# Transmet le token du .env à l'environnement système pour Hugging Face
+if settings.HF_TOKEN:
+    os.environ["HF_TOKEN"] = settings.HF_TOKEN
+
 logger = logging.getLogger(__name__)
 
 PERSIST_DIR = os.getenv("CHROMA_PERSIST_DIR", "./chroma_db")
@@ -104,7 +110,7 @@ def search_knowledge_base(
                 doc_id=doc.metadata.get("chunk_id", "unknown"),
                 titre=doc.metadata.get("titre", "Document"),
                 source_file=doc.metadata.get("source_file", "inconnu"),
-                score_pertinence=round(float(score), 3),
+                score_pertinence=round(min(1.0, max(0.0, float(score))), 3),
                 extrait=doc.page_content.strip(),
             )
         )

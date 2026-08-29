@@ -33,6 +33,12 @@ from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_chroma import Chroma
 from langchain_core.documents import Document
 
+from app.core.config import settings
+
+# Transmet le token du .env à l'environnement système pour Hugging Face
+if settings.HF_TOKEN:
+    os.environ["HF_TOKEN"] = settings.HF_TOKEN
+
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [INGEST] %(message)s")
 logger = logging.getLogger(__name__)
 

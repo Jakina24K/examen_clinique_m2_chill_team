@@ -1,8 +1,6 @@
 from fastapi import APIRouter, HTTPException
 from app.services.recommandation_service import recommandation_service
 from pydantic import BaseModel, Field
-from app.services.llm_onthology_service import extract_profile_from_prompt
-from app.services.recommandation_prompt_service import recommandation_prompt_service
 
 routeur = APIRouter()
 
@@ -34,35 +32,3 @@ def get_recommandation_dynamique(profile: DynamicProfileInput):
     if not results:
         raise HTTPException(status_code=404, detail="Aucun parcours correspondant trouvé")
     return results
-
-
-@routeur.post("/prompt")
-def get_recommandation_from_prompt(input_data: str):
-    # 1. Extraction via Gemini
-    try:
-        profile_extracted = extract_profile_from_prompt(input_data)
-    except Exception as e:
-        # Renvoie l'erreur exacte dans le JSON Swagger au lieu de crasher en 500
-        raise HTTPException(
-            status_code=500,
-            detail=f"Erreur lors de l'extraction Gemini : {type(e).__name__} - {str(e)}"
-        )
-
-    # 2. Requête SPARQL
-    try:
-        results = recommandation_prompt_service.get_recommandation_dynamique(
-            competences=profile_extracted.competences,
-            centres_interet=profile_extracted.centres_interet,
-        )
-    except Exception as e:
-        raise HTTPException(
-            status_code=500,
-            detail=f"Erreur lors de la requête SPARQL : {type(e).__name__} - {str(e)}"
-        )
-
-    # 3. Réponse
-    return {
-        "prompt_utilisateur": input_data,
-        "profil_extrait": profile_extracted.model_dump(),
-        "recommandations": results,
-    }

@@ -38,10 +38,8 @@ def log_response(response_data: dict, log_file: Path = LOG_FILE) -> None:
         "ontology": {
             "competences": ontology.get("profil_extrait", {}).get("competences", []),
             "centres_interet": ontology.get("profil_extrait", {}).get("centres_interet", []),
-            "top_recommandation": (
-                ontology.get("recommandations", [{}])[0]
-                if ontology.get("recommandations") else None
-            ),
+            "formation_demandee": ontology.get("formation_demandee"),
+            "eligible": ontology.get("eligible"),
         },
         "ml": {
             "success": ml.get("success"),

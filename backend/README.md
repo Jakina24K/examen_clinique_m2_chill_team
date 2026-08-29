@@ -1,4 +1,4 @@
-# ETUDE DE CAS M2 - ORIENT'IA 
+# ETUDE DE CAS M2 (IGGLIA 5) - ORIENT'IA 
 <!-- 
 - LAZAHARIVELO Jakina Andriantsoa 
 N° 05

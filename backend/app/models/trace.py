@@ -1,13 +1,10 @@
-import enum
-import uuid
-from datetime import datetime
-# Importer ForeignKey, JSON, Text et func depuis sqlalchemy
-from sqlalchemy import Column, String, Boolean, DateTime, Enum, Integer, ForeignKey, JSON, Text, func, relationship
+# app/models/trace.py
+from sqlalchemy import Column, String, DateTime, Integer, ForeignKey, JSON, Text, func
+from sqlalchemy.orm import relationship
 from app.core.database import Base
 
 class Trace(Base):
     __tablename__ = "traces"
-
     id = Column(Integer, primary_key=True, index=True)
     session_id = Column(Integer, ForeignKey("sessions.id"), nullable=False)
     message_id = Column(Integer, ForeignKey("messages.id"), nullable=True)
@@ -21,4 +18,4 @@ class Trace(Base):
     date = Column(DateTime(timezone=True), server_default=func.now())
 
     session = relationship("SessionConversation", back_populates="traces")
-    reponse = relationship("Reponse", back_populates="trace", useliste = False)
+    reponse = relationship("Reponse", back_populates="trace", uselist=False)

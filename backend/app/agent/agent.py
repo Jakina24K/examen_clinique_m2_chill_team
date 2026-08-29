@@ -16,6 +16,7 @@ Caractéristiques avancées :
 import re
 import logging
 import time
+import threading
 import json
 import hashlib
 from typing import Dict, List, Any, Optional, Tuple
@@ -322,6 +323,7 @@ class ConversationStore:
         self._store: Dict[str, Dict[str, Any]] = {}
         self._cache: Dict[str, Dict[str, Any]] = {}
         self._max_sessions = max_sessions
+        self._lock = threading.RLock()
         self._ttl_seconds = ttl_seconds
         self._stats = {
             "total_sessions": 0,
@@ -332,49 +334,53 @@ class ConversationStore:
     
     def get(self, session_id: str) -> Optional[List[Any]]:
         """Récupère l'historique d'une session."""
-        session_data = self._store.get(session_id)
-        if not session_data:
-            return None
-        
-        if datetime.now() - session_data["last_accessed"] > timedelta(seconds=self._ttl_seconds):
-            del self._store[session_id]
-            logger.info(f"Session {session_id} expirée")
-            return None
-        
-        session_data["last_accessed"] = datetime.now()
-        self._stats["total_sessions"] += 1
-        return session_data["history"]
+        with self._lock:
+            session_data = self._store.get(session_id)
+            if not session_data:
+                return None
+            
+            if datetime.now() - session_data["last_accessed"] > timedelta(seconds=self._ttl_seconds):
+                del self._store[session_id]
+                logger.info(f"Session {session_id} expirée")
+                return None
+            
+            session_data["last_accessed"] = datetime.now()
+            self._stats["total_sessions"] += 1
+            return session_data["history"]
     
     def set(self, session_id: str, history: List[Any]) -> None:
         """Stocke l'historique d'une session."""
-        self._evict_if_needed()
-        self._store[session_id] = {
-            "history": history,
-            "last_accessed": datetime.now(),
-            "created_at": self._store.get(session_id, {}).get("created_at", datetime.now()),
-            "message_count": self._store.get(session_id, {}).get("message_count", 0) + 1,
-        }
-        self._stats["total_messages"] += 1
+        with self._lock:
+            self._evict_if_needed()
+            self._store[session_id] = {
+                "history": history,
+                "last_accessed": datetime.now(),
+                "created_at": self._store.get(session_id, {}).get("created_at", datetime.now()),
+                "message_count": self._store.get(session_id, {}).get("message_count", 0) + 1,
+            }
+            self._stats["total_messages"] += 1
     
     def get_cache(self, key: str) -> Optional[Any]:
         """Récupère une valeur du cache."""
-        cached = self._cache.get(key)
-        if cached and datetime.now() - cached["timestamp"] < timedelta(seconds=CACHE_TTL_SECONDS):
-            self._stats["cache_hits"] += 1
-            return cached["value"]
+        with self._lock:
+            cached = self._cache.get(key)
+            if cached and datetime.now() - cached["timestamp"] < timedelta(seconds=CACHE_TTL_SECONDS):
+                self._stats["cache_hits"] += 1
+                return cached["value"]
         self._stats["cache_misses"] += 1
         return None
     
     def set_cache(self, key: str, value: Any) -> None:
         """Stocke une valeur dans le cache."""
-        self._cache[key] = {"value": value, "timestamp": datetime.now()}
+        with self._lock:
+            self._cache[key] = {"value": value, "timestamp": datetime.now()}
     
     def _evict_if_needed(self) -> None:
-        """Éviction des sessions si limite atteinte."""
-        if len(self._store) >= self._max_sessions:
-            oldest = min(self._store.items(), key=lambda x: x[1]["last_accessed"])
-            del self._store[oldest[0]]
-            logger.info(f"Session {oldest[0]} évincée")
+        with self._lock:
+            if len(self._store) >= self._max_sessions:
+                oldest = min(self._store.items(), key=lambda x: x[1]["last_accessed"])
+                del self._store[oldest[0]]  # Doit être INDENTÉ dans le if
+                logger.info(f"Session {oldest[0]} évincée")
     
     def clear_expired(self) -> None:
         """Supprime les sessions expirées."""
@@ -435,7 +441,6 @@ def _build_agent_executor() -> AgentExecutor:
         max_execution_time=30,
     )
 
-
 _agent_executor = None
 
 def _get_agent_executor() -> AgentExecutor:
@@ -467,7 +472,6 @@ def _extract_tool_trace(intermediate_steps) -> List[Dict[str, Any]]:
 
 
 def _extract_sources(tool_trace: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
-    """Extrait les sources de la trace."""
     sources = []
     for step in tool_trace:
         if step["outil"] == "rechercher_formation":
@@ -477,8 +481,9 @@ def _extract_sources(tool_trace: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
                     if isinstance(item, dict):
                         sources.append({
                             "titre": item.get("titre", "Source"),
-                            "fichier": item.get("source", ""),
-                            "contenu": item.get("contenu", "")[:300],
+                            "fichier": item.get("source_file", ""), 
+                            "contenu": item.get("extrait", "")[:300], 
+                            "score_pertinence": item.get("score_pertinence"), 
                         })
     return sources
 
@@ -556,51 +561,51 @@ def process_message(session_id: str, message: str) -> Dict[str, Any]:
     # 1. Garde-fous
     blocked, reason, warnings = evaluate_security(message)
     if blocked:
+        logger.warning(f"[{session_id}] Message bloqué — raison={reason} signaux={warnings}")
         return {
             "reponse": f"Je ne peux pas traiter cette demande.\n\n**Raison**: {reason}",
-            "sources": [],
-            "outils_executes": [],
-            "incertitude": "N/A",
+            "sources": [], "outils_executes": [], "incertitude": "N/A",
             "avertissements": warnings,
             "temps_execution_s": round(time.time() - start_time, 2),
             "bloquee": True,
         }
-    
+
     # 2. Session
     history = _conversation_store.get(session_id) or []
     if not history:
-        logger.info(f"Nouvelle session {session_id}")
-    
+        logger.info(f"[{session_id}] Nouvelle session")
+
     # 3. Cache
     cache_key = hashlib.md5(f"{session_id}_{message}".encode()).hexdigest()
     cached = _conversation_store.get_cache(cache_key)
     if cached:
+        logger.info(f"[{session_id}] Cache hit ({cache_key[:8]}...)")
         return {**cached, "temps_execution_s": round(time.time() - start_time, 2), "cache_hit": True}
-    
+    logger.debug(f"[{session_id}] Cache miss ({cache_key[:8]}...)")
+
     # 4. Agent
     executor = _get_agent_executor()
     try:
         result = executor.invoke({"input": message, "chat_history": history})
-    except Exception as e:
-        logger.error(f"[{session_id}] Erreur: {e}")
+    except Exception:
+        logger.error(f"[{session_id}] Échec de l'exécution de l'agent", exc_info=True)
         return {
             "reponse": f"Erreur technique. Veuillez réessayer.\n\n{DISCLAIMER}",
-            "sources": [],
-            "outils_executes": [],
-            "incertitude": "Élevée",
-            "avertissements": [str(e)],
+            "sources": [], "outils_executes": [], "incertitude": "Élevée",
+            "avertissements": ["Une erreur technique est survenue côté serveur."],
             "temps_execution_s": round(time.time() - start_time, 2),
-            "erreur": str(e),
         }
-    
+
     # 5. Extraction
     final_text = result.get("output", "")
     tool_trace = _extract_tool_trace(result.get("intermediate_steps", []))
     sources = _extract_sources(tool_trace)
-    
+    _log_tool_trace(session_id, tool_trace)
+
     # 6. Validation
     is_valid, err = _validate_response(final_text, sources, tool_trace)
     if not is_valid:
+        logger.warning(f"[{session_id}] Réponse invalidée — raison={err}")
         final_text = f"Ma réponse nécessite une vérification. {DISCLAIMER}"
     
     # 7. Incertitude
@@ -640,6 +645,26 @@ def process_message(session_id: str, message: str) -> Dict[str, Any]:
         "session_id": session_id,
         "cache_hit": False,
     }
+
+def cleanup_expired_sessions() -> None:
+    """Public wrapper so main.py can call this without reaching into the
+    private _conversation_store."""
+    _conversation_store.clear_expired()
+
+
+def _log_tool_trace(session_id: str, tool_trace: List[Dict[str, Any]]) -> None:
+    """PII-safe summary: tool name + rough status only. Full params/results
+    already go to the DB trace and the structured JSON log — never duplicate
+    that raw payload into the plaintext app log."""
+    try:
+        summary = []
+        for t in tool_trace:
+            res = t.get("resultat")
+            statut = res.get("statut") if isinstance(res, dict) else "n/a"
+            summary.append({"outil": t.get("outil"), "statut": statut})
+        logger.info(f"[{session_id}] Outils exécutés: {summary}")
+    except Exception:
+        logger.debug(f"[{session_id}] Échec du log de trace outils", exc_info=True)
 
 
 # ============================================================================

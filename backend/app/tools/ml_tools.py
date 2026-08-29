@@ -1,12 +1,9 @@
 """
 app/tools/ml_tools.py
 ------------------------
-Outil Machine Learning : classification du profil étudiant vers un parcours.
-
-MOCK ACTUEL : heuristique de correspondance mot-clé (à remplacer, voir TODO).
-Le contrat de sortie (`AnalyserProfilOutput`) est indépendant de
-l'implémentation : tant que le classifieur réel construit cet objet avant
-de retourner, rien dans agent.py n'a besoin de changer.
+Paradigme "Single LLM" : cet outil ne fait AUCUN appel LLM. Il reçoit un
+profil déjà structuré par l'agent et le mappe directement vers les 76
+colonnes MODEL_FEATURES, via ml.src.predict.predict_from_features.
 """
 
 import logging
@@ -15,11 +12,13 @@ from typing import Any, Dict, List, Literal, Optional
 from langchain_core.tools import tool
 from pydantic import BaseModel, Field, model_validator
 
+from ml.src.predict import predict_from_features, MODEL_FEATURES, PredictionError
+
 logger = logging.getLogger(__name__)
 
 
 class ProfilInput(BaseModel):
-    matieres_preferees: List[str] = Field(default_factory=list, description="Matières explicitement déclarées par l'étudiant")
+    matieres_preferees: List[str] = Field(default_factory=list, description="Matières explicitement déclarées")
     competences: List[str] = Field(default_factory=list, description="Compétences explicitement déclarées")
     centres_interet: List[str] = Field(default_factory=list, description="Centres d'intérêt explicitement déclarés")
 
@@ -39,15 +38,65 @@ class AnalyserProfilOutput(BaseModel):
 
     @model_validator(mode="after")
     def _coherence(self) -> "AnalyserProfilOutput":
-        """Empêche un classifieur réel de renvoyer statut='ok' sans prédictions
-        exploitables, ou statut='profil_insuffisant' sans message — exactement
-        la classe d'erreur qui casserait la règle 8 du system prompt sans que
-        rien ne le signale."""
         if self.statut == "ok" and not self.predictions:
             raise ValueError("statut='ok' exige au moins une prédiction dans `predictions`.")
         if self.statut == "profil_insuffisant" and not self.message:
             raise ValueError("statut='profil_insuffisant' exige un `message` explicatif.")
         return self
+
+
+# ==========================================================================
+# Mapping texte-libre (déjà extrait par l'agent) -> colonnes MODEL_FEATURES.
+# POINT DE DÉPART pour l'équipe ML — cette table de correspondance mot-clé
+# est volontairement simple et doit être étoffée/validée par vous ; je n'ai
+# pas de visibilité sur l'importance réelle des features à l'entraînement.
+# ==========================================================================
+
+KEYWORD_TO_FEATURE: Dict[str, str] = {
+    "mathématiques": "niveau_mathématiques", "maths": "niveau_mathématiques",
+    "algèbre": "niveau_algèbre", "analyse": "niveau_analyse",
+    "programmation": "niveau_informatique", "informatique": "niveau_informatique",
+    "développement": "niveau_informatique", "développeur": "niveau_informatique",
+    "algorithme": "niveau_algorithme", "base de données": "niveau_base_de_données",
+    "html": "niveau_html_css", "css": "niveau_html_css",
+    "physique": "niveau_physique", "chimie": "niveau_chimie",
+    "biologie": "niveau_biologie_animale", "économie": "niveau_economie",
+    "finance": "niveau_finance_publique", "comptabilité": "niveau_comptabilité",
+    "droit": "niveau_droit", "marketing": "niveau_marketing",
+    "anglais": "niveau_anglais", "statistique": "niveau_statistiques_appliquée",
+}
+
+COMPETENCE_TO_FEATURE: Dict[str, str] = {
+    "résolution de problèmes": "analyse_synthese", "esprit critique": "analyse_synthese",
+    "analyse": "analyse_synthese", "rigueur": "analyse_synthese",
+    "travail en équipe": "travail_equipe", "collaboration": "travail_equipe",
+    "autonomie": "autonomie", "initiative": "autonomie",
+    "créativité": "creativite", "innovation": "creativite",
+    "gestion de projet": "gestion_projet", "leadership": "gestion_projet",
+}
+
+NEUTRAL_LEVEL, MATCHED_LEVEL = 2, 4  # échelle 1-5 utilisée à l'entraînement
+DEFAULT_CATEGORICALS: Dict[str, Any] = {
+    "age": 23, "statut": 0, "bac_serie": 1, "environnement": 4, "secteur": 0,
+}
+
+
+def _map_profil_to_features(matieres: List[str], competences: List[str], interets: List[str]) -> Dict[str, Any]:
+    features: Dict[str, Any] = dict(DEFAULT_CATEGORICALS)
+    for col in MODEL_FEATURES:
+        if col.startswith("niveau_"):
+            features[col] = NEUTRAL_LEVEL
+    for term in [t.lower() for t in matieres + interets]:
+        for kw, col in KEYWORD_TO_FEATURE.items():
+            if kw in term or term in kw:
+                features[col] = MATCHED_LEVEL
+    for col in ("travail_equipe", "autonomie", "analyse_synthese", "creativite", "gestion_projet"):
+        features[col] = 0
+    for comp in [c.lower() for c in competences]:
+        for kw, col in COMPETENCE_TO_FEATURE.items():
+            if kw in comp or comp in kw:
+                features[col] = MATCHED_LEVEL
+    return features
 
 
 @tool("analyser_profil_ml", args_schema=ProfilInput)
@@ -57,18 +106,8 @@ def analyser_profil_ml(
     centres_interet: Optional[List[str]] = None,
 ) -> Dict[str, Any]:
     """
-    Appelle le modèle de Machine Learning de recommandation de parcours.
-    Entrée : UNIQUEMENT le profil déclaré explicitement par l'étudiant
-    (jamais un profil inféré du style d'écriture ou d'attributs sensibles).
-    Sortie : distribution de probabilités sur les parcours + indice de confiance.
-
-    GARDE-FOU : ce modèle ne doit jamais recevoir sexe/âge/origine comme feature.
-
-    TODO (teammate ML) : remplacer le bloc MOCK par le vrai classifieur, ex.
-        model = joblib.load("models/orientation_clf.pkl")
-        proba = model.predict_proba(vectorizer.transform([features]))
-    Tant que le résultat passe par `AnalyserProfilOutput(...)` avant le
-    `return`, la validation ci-dessus protège le contrat automatiquement.
+    Prédit un parcours à partir du profil déjà extrait par l'agent — aucun
+    appel LLM ici. GARDE-FOU : jamais de sexe/âge/origine comme feature.
     """
     matieres_preferees = matieres_preferees or []
     competences = competences or []
@@ -77,29 +116,24 @@ def analyser_profil_ml(
     if not (matieres_preferees or competences or centres_interet):
         return AnalyserProfilOutput(
             statut="profil_insuffisant",
-            message="Profil trop incomplet pour une prédiction fiable — poser une question de clarification.",
+            message="Profil trop incomplet pour une prédiction fiable.",
         ).model_dump()
 
-    # --- MOCK : heuristique simple servant de placeholder au vrai classifieur ---
-    signal_data = {m.lower() for m in matieres_preferees + centres_interet}
-    scores = {
-        "ISAIA (IA & Data)": 0.15 + 0.25 * len(signal_data & {"mathématiques", "programmation", "data", "analyse de données", "ia"}),
-        "IGGLIA (Génie Logiciel)": 0.15 + 0.25 * len(signal_data & {"programmation", "développement", "informatique"}),
-        "Réseaux & Cybersécurité": 0.10 + 0.25 * len(signal_data & {"réseaux", "sécurité", "cybersécurité"}),
-    }
-    total = sum(scores.values()) or 1.0
-    predictions = sorted(
-        [{"parcours": k, "probabilite": round(v / total, 3)} for k, v in scores.items()],
-        key=lambda x: x["probabilite"],
-        reverse=True,
-    )
-    confiance = predictions[0]["probabilite"] if predictions else 0.0
+    try:
+        result = predict_from_features(_map_profil_to_features(matieres_preferees, competences, centres_interet))
+    except PredictionError as e:
+        logger.error("Erreur classifieur ML", exc_info=True)
+        return AnalyserProfilOutput(statut="profil_insuffisant", message=str(e)).model_dump()
+
+    predictions = [MLPrediction(**p) for p in result["predictions"]]
+    if not predictions:
+        return AnalyserProfilOutput(statut="profil_insuffisant", message="Aucune prédiction exploitable.").model_dump()
 
     return AnalyserProfilOutput(
         statut="ok",
-        modele="mock_heuristique_v0 (à remplacer par le classifieur entraîné)",
+        modele="orientia_best_model_v2 (sklearn)",
         predictions=predictions,
-        indice_confiance=round(confiance, 3),
+        indice_confiance=predictions[0].probabilite,
         features_utilisees={
             "matieres_preferees": matieres_preferees,
             "competences": competences,

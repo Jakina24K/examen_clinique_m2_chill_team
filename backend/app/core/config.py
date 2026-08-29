@@ -14,8 +14,6 @@ class Settings(BaseSettings):
     APP_NAME: str = "ORIENT'IA - Assistant d'orientation pédagogique"
     DEBUG: bool = True
     GEMINI_API_KEY: Optional[str] = None
-    GEMINI_API_KEY_ONTO : Optional[str] = None
-    GEMINI_API_KEY_ML : Optional[str] = None
     HF_TOKEN: Optional[str] = None
     CHROMA_PERSIST_DIR: str = "./chroma_db"
 
