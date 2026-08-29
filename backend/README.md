@@ -1,26 +1,12 @@
 # ETUDE DE CAS M2 (IGGLIA 5) - ORIENT'IA 
-<!-- 
-- LAZAHARIVELO Jakina Andriantsoa 
-N° 05
 
-- RANDRIANAVALONA Mahefa Nirina
-N°55
-
-- RAJOHNSON Fitia 
-N°04
-
-- RANDRIANANDRAINA Jessica
-N°02
-
-- ANDRIANIRINA Tsanta Fitiavana
-N°08
-
-- ANDRITIANA FANORENANTSOA Steddi Karen 
-N°48
-
-- RAMANDIMBISON Ezra Niel 
-N°15
- -->
+**- RANDRIANANDRAINA Jessica , N°02**
+**- RAJOHNSON Fitia , N°04**
+**- LAZAHARIVELO Jakina Andriantsoa , N° 05**
+**- ANDRIANIRINA Tsanta Fitiavana , N°08**
+**- RAMANDIMBISON Ezra Niel , N°15**
+**- ANDRITIANA FANORENANTSOA Steddi Karen , N°48**
+**- RANDRIANAVALONA Mahefa Nirina , N°55**
 
 ## Stack Technique
 - **LLM**: gemini-2.5-flash
